@@ -1,10 +1,9 @@
 package it.uniroma3.dia.alfredmpi.mpirunner;
 
-public class MasterMPI implements MPIRunner {
+public class MasterMPI {
 	// TODO: contains master logic
 
-	@Override
-	public void run(String[] args) {
+	public static void run() {
 		// TODO Auto-generated method stub
 		
 	}

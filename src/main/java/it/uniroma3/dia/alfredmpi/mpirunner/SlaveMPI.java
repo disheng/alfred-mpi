@@ -1,10 +1,9 @@
 package it.uniroma3.dia.alfredmpi.mpirunner;
 
-public class SlaveMPI implements MPIRunner {
+public class SlaveMPI {
 	// TODO: contains slave logic
 	
-	@Override
-	public void run(String[] args) {
+	public static void run() {
 		// TODO Auto-generated method stub
 		
 	}
