@@ -17,8 +17,8 @@ public class MPIExample {
 	 */
 	public static void main(String[] args) {
 		Options cmdLineOptions = new Options();
-		cmdLineOptions.addOption("p", "rank", true, "run rank example");
-		cmdLineOptions.addOption("r", "ring", true, "run ring example");
+		cmdLineOptions.addOption("p", "rank", false, "run rank example");
+		cmdLineOptions.addOption("r", "ring", false, "run ring example");
 		
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd;

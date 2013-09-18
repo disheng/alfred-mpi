@@ -9,9 +9,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import javax.xml.xpath.XPathFactoryConfigurationException;
-
-import net.sf.saxon.lib.NamespaceConstant;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -114,15 +111,7 @@ public class XPathHandler {
 	
 	private static void inizializeXPathFactory() {
 		if (xPathfactory == null){
-			try {
-				xPathfactory = XPathFactory.newInstance(NamespaceConstant.OBJECT_MODEL_SAXON);
-			} catch (XPathFactoryConfigurationException e) {
-				e.printStackTrace();
-			}
+			xPathfactory = XPathFactory.newInstance();
 		}		
 	}
-	
-	
-	
-
 }

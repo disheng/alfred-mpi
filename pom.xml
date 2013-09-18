@@ -14,9 +14,14 @@
 			<id>java.net</id>
 			<name>java.net stable repo</name>
 			<url>https://maven.java.net/content/groups/public</url>
-		</repository>		
-	</repositories>
-	
+		</repository>
+		<repository>
+			<id>diarepo</id>
+			<name>Dia repository</name>
+			<url>http://ortles.dia.uniroma3.it:8888/nexus/content/repositories/snapshots</url>
+		</repository>
+	</repositories>	
+	 
 	<pluginRepositories>
         <pluginRepository>
             <id>onejar-maven-plugin.googlecode.com</id>
@@ -32,6 +37,8 @@
 	      <includes>
 	        <include>*.dll</include>
 	        <include>*.so</include>
+	        <include>*.la</include>
+	        <include>*.a</include>
 	      </includes>
 	    </resource>
 	    <resource>
@@ -46,16 +53,27 @@
 	        <plugin>
 	            <groupId>org.apache.maven.plugins</groupId>
 	            <artifactId>maven-jar-plugin</artifactId>
-	            <version>2.3.2</version>
-	            <configuration>
-	                <archive>
-	                    <manifest>
-	                        <addClasspath>false</addClasspath>
-	                        <classpathPrefix>lib/</classpathPrefix>
-	                        <mainClass>it.uniroma3.dia.alfredmpi.MainClass</mainClass>
-	                    </manifest>
-	                </archive>
-	            </configuration>
+	            <version>2.3.2</version>        			
+						<configuration>
+						    <filters>					    
+						        <filter>
+						            <artifact>*:*</artifact>
+						            <excludes>
+						                <exclude>META-INF/*.SF</exclude>
+						                <exclude>META-INF/*.DSA</exclude>
+						                <exclude>META-INF/*.RSA</exclude>
+						                <exclude>META-INF/*.EC</exclude>
+						            </excludes>
+						        </filter>
+						    </filters>	 	            
+			                <archive>
+			                    <manifest>
+			                        <addClasspath>false</addClasspath>
+			                        <classpathPrefix>lib/</classpathPrefix>
+			                        <mainClass>it.uniroma3.dia.alfredmpi.examples.MPIExample</mainClass>
+			                    </manifest>
+			                </archive>
+		           		</configuration>            
 	        </plugin>
 		 	<!-- with assembly -->
 		  	<!-- clean compile assembly:single -->
@@ -119,15 +137,15 @@
 			<version>1.0.3</version>
 		</dependency>
 		<dependency>
-			<groupId>net.sf.saxon</groupId>
-			<artifactId>Saxon-HE</artifactId>
-			<version>9.5.1-1</version>
-		</dependency>
-		<dependency>
 		  <groupId>openmpi</groupId>
 		  <artifactId>openmpi</artifactId>
 		  <version>19a1r29179-SNAPSHOT</version>
-		</dependency>		
+		</dependency>
+		<dependency>
+			<groupId>it.uniroma3.dia.db</groupId>
+			<artifactId>alf-core</artifactId>
+			<version>0.0.6-SNAPSHOT</version>
+		</dependency>
 	   <dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
