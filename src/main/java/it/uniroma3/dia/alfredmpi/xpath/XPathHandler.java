@@ -1,4 +1,4 @@
-package it.uniroma3.dia.alfredmpi;
+package it.uniroma3.dia.alfredmpi.xpath;
 
 import java.io.ByteArrayInputStream;
 
