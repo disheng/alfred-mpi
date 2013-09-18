@@ -123,6 +123,11 @@
 			<artifactId>Saxon-HE</artifactId>
 			<version>9.5.1-1</version>
 		</dependency>
+		<dependency>
+		  <groupId>openmpi</groupId>
+		  <artifactId>openmpi</artifactId>
+		  <version>19a1r29179-SNAPSHOT</version>
+		</dependency>		
 	   <dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
