@@ -1,6 +1,6 @@
-package it.uniroma3.dia.alfredmpi.mpirunner;
+package it.uniroma3.dia.alfred.mpi.runner;
 
-import it.uniroma3.dia.alfredmpi.model.ConfigHolder;
+import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
 
 import java.util.List;
 

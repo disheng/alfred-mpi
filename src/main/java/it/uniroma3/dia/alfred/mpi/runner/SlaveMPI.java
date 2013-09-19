@@ -1,6 +1,6 @@
-package it.uniroma3.dia.alfredmpi.mpirunner;
+package it.uniroma3.dia.alfred.mpi.runner;
 
-import it.uniroma3.dia.alfredmpi.mpirunner.MPIConstants.AbortReason;
+import it.uniroma3.dia.alfred.mpi.runner.MPIConstants.AbortReason;
 
 import java.util.List;
 

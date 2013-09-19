@@ -1,4 +1,4 @@
-package it.uniroma3.dia.alfredmpi.model;
+package it.uniroma3.dia.alfred.mpi.model;
 
 import java.util.Map;
 

@@ -1,7 +1,7 @@
 package project.mwe;
 
-import it.uniroma3.dia.alfredmpi.model.ConfigHolder;
-import it.uniroma3.dia.alfredmpi.mpirunner.RunAlfred;
+import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
+import it.uniroma3.dia.alfred.mpi.runner.RunAlfred;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package it.uniroma3.dia.alfredmpi.mpirunner;
+package it.uniroma3.dia.alfred.mpi.runner;
 
 public class MPIConstants {
 	private MPIConstants() {}

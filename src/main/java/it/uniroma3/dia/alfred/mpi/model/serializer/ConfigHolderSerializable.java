@@ -1,6 +1,6 @@
-package it.uniroma3.dia.alfredmpi.model.serializer;
+package it.uniroma3.dia.alfred.mpi.model.serializer;
 
-import it.uniroma3.dia.alfredmpi.model.ConfigHolder;
+import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -1,4 +1,4 @@
-package it.uniroma3.dia.alfredmapred;
+package it.uniroma3.dia.alfred.mapred;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
