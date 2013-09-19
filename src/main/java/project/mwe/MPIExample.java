@@ -1,4 +1,4 @@
-package it.uniroma3.dia.alfredmpi.examples;
+package project.mwe;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;

@@ -69,8 +69,8 @@
 			                <archive>
 			                    <manifest>
 			                        <addClasspath>false</addClasspath>
-			                        <classpathPrefix>lib/</classpathPrefix>
-			                        <mainClass>it.uniroma3.dia.alfredmpi.examples.MPIExample</mainClass>
+			                        <!--  <classpathPrefix>lib/</classpathPrefix> -->
+			                        <mainClass>project.mwe.MPIExample</mainClass>
 			                    </manifest>
 			                </archive>
 		           		</configuration>            
