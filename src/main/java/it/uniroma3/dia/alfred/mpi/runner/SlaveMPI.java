@@ -1,8 +1,12 @@
 package it.uniroma3.dia.alfred.mpi.runner;
 
+import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
 import it.uniroma3.dia.alfred.mpi.runner.MPIConstants.AbortReason;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import mpi.MPI;
 import mpi.MPIException;
@@ -13,7 +17,7 @@ public class SlaveMPI {
 	// TODO: contains slave logic
 	
 	public static void run() throws MPIException {
-		List<Integer> confPerWorker = Lists.newArrayList();
+		List<ConfigHolder> confPerWorker = Lists.newArrayList();
 		int howMuchWork = 0;
 		
 		int[] messageSend = new int[1];
@@ -41,5 +45,21 @@ public class SlaveMPI {
 		}
 		
 		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]:end");
+		
+		// TODO: recv confs
+		
+		// Execute configurations in parallel if necessary
+        ExecutorService executor = Executors.newFixedThreadPool(Math.max(Runtime.getRuntime().availableProcessors() - 1, 1));
+        List<Future<Boolean>> threadResults = Lists.newArrayList();
+        for (ConfigHolder cfgCurr: confPerWorker) {
+        	threadResults.add(executor.submit(new SlaveMPIThread(cfgCurr)));
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {}		
+		
+        // TODO: iterate futures
+        // future.get() retrieves the results
+
+        // TODO: send to master to know how it went 
 	}
 }
