@@ -31,5 +31,8 @@ public class RunAlfred {
 		} catch(MPIException e) {
 			e.printStackTrace();
 		}
+		
+		// MPI Abort is reason for global abort execution
+		System.exit(aReason.getReason());
 	}
 }

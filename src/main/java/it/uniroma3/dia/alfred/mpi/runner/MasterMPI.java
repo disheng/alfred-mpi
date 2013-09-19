@@ -1,7 +1,9 @@
 package it.uniroma3.dia.alfred.mpi.runner;
 
 import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
+import it.uniroma3.dia.alfred.mpi.model.serializer.ConfigHolderSerializable;
 import it.uniroma3.dia.alfred.mpi.runner.MPIConstants.AbortReason;
+import it.uniroma3.dia.alfred.mpi.runner.MPIConstants.TagValue;
 
 import java.util.List;
 
@@ -39,7 +41,7 @@ public class MasterMPI {
 		for(int i = 0; i < processCountWithoutMaster; ++i) {
 			messageSend[0] = confPerWorker.get(i);
 			try {
-				MPI.COMM_WORLD.Send(messageSend, 0, 1, MPI.INT, i + 1, MPIConstants.TAG_SIZE_CONF);
+				MPI.COMM_WORLD.Send(messageSend, 0, 1, MPI.INT, i + 1, TagValue.TAG_SIZE_CONF.getValue());
 			} catch (MPIException e) {
 				e.printStackTrace();
 				RunAlfred.abort(AbortReason.WORK_SEND);
@@ -60,7 +62,23 @@ public class MasterMPI {
 			RunAlfred.abort(AbortReason.WORK_SEND_ACK);
 		}
 		
+		int slaveId = 1;
+		int confSent = 0;
+		char[] localBuffer;
+		for(Integer slaveSend: confPerWorker) {
+			for(int i = confSent; i < slaveSend; ++i, ++confSent) {
+				localBuffer = ConfigHolderSerializable.toJson(inputConfigs.get(i)).toCharArray();
+				messageSend[0] = localBuffer.length;
+				
+				MPI.COMM_WORLD.Send(messageSend, 0, 1, MPI.INT, slaveId, TagValue.TAG_CONF_LEN.getValue());
+				MPI.COMM_WORLD.Send(localBuffer, 0, localBuffer.length, MPI.CHAR, slaveId, TagValue.TAG_CONF_DATA.getValue());
+			}
+			
+			slaveId++;
+		}
 		
+		MPI.COMM_WORLD.Barrier();
+		// TODO: Recv boolean results
 	}
 
 }

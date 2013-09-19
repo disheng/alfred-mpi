@@ -1,7 +1,9 @@
 package it.uniroma3.dia.alfred.mpi.runner;
 
 import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
+import it.uniroma3.dia.alfred.mpi.model.serializer.ConfigHolderSerializable;
 import it.uniroma3.dia.alfred.mpi.runner.MPIConstants.AbortReason;
+import it.uniroma3.dia.alfred.mpi.runner.MPIConstants.TagValue;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -26,7 +28,7 @@ public class SlaveMPI {
 		messageRecv[0] = 0;		
 		
 		try {
-			MPI.COMM_WORLD.Recv(messageRecv, 0, 1, MPI.INT, MPIConstants.MASTER, MPIConstants.TAG_SIZE_CONF);
+			MPI.COMM_WORLD.Recv(messageRecv, 0, 1, MPI.INT, MPIConstants.MASTER, TagValue.TAG_SIZE_CONF.getValue());
 		} catch (MPIException e) {
 			e.printStackTrace();
 			RunAlfred.abort(AbortReason.WORK_SEND);
@@ -46,7 +48,15 @@ public class SlaveMPI {
 		
 		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]:end");
 		
-		// TODO: recv confs
+		// Recv confs
+		char[] stringRecvBuffer;
+		messageRecv[0] = 0;
+		for(int i = 0; i < howMuchWork; ++i) {
+			MPI.COMM_WORLD.Recv(messageRecv, 0, 1, MPI.INT, MPIConstants.MASTER, TagValue.TAG_CONF_LEN.getValue());
+			stringRecvBuffer = new char[messageRecv[0]];
+			MPI.COMM_WORLD.Recv(stringRecvBuffer, 0, messageRecv[0], MPI.CHAR, MPIConstants.MASTER, TagValue.TAG_CONF_DATA.getValue());
+			confPerWorker.add( ConfigHolderSerializable.fromJson(String.valueOf(stringRecvBuffer)) );
+		}
 		
 		// Execute configurations in parallel if necessary
         ExecutorService executor = Executors.newFixedThreadPool(Math.max(Runtime.getRuntime().availableProcessors() - 1, 1));
