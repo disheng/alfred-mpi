@@ -36,6 +36,14 @@ public class ConfigHolderSerializable {
 		return returnRef;
 	}
 	
+	public static void toJsonFile(ConfigHolder input, String filePath) {
+		try {
+			jacksonMapper.writeValue(new File(filePath), input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static ConfigHolder fromJsonFile(String filePath) {
 		String jsonString = null;
 		

@@ -1,8 +1,11 @@
 package it.uniroma3.dia.alfred.mpi.runner;
 
 import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
+import it.uniroma3.dia.alfred.mpi.model.serializer.ConfigHolderSerializable;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import mpi.MPI;
 import mpi.MPIException;
@@ -14,7 +17,9 @@ public class RunAlfred {
 		MPI.Init(args);
 
 		int myrank = MPI.COMM_WORLD.Rank();
-		int size = MPI.COMM_WORLD.Size() ;
+		int size = MPI.COMM_WORLD.Size();
+		
+		Collections.shuffle(inputConfigs, new Random(System.nanoTime()));
 		
 		if (myrank == RANK_MASTER) {
 			MasterMPI.run(inputConfigs, size - 1);
@@ -34,5 +39,11 @@ public class RunAlfred {
 		
 		// MPI Abort is reason for global abort execution
 		System.exit(aReason.getReason());
+	}
+	
+	public static void dumpConf(int rank, List<ConfigHolder> listCfg) {
+		for(ConfigHolder currCfg: listCfg) {
+			ConfigHolderSerializable.toJsonFile(currCfg, rank + "-" + currCfg.getUid());
+		}
 	}
 }

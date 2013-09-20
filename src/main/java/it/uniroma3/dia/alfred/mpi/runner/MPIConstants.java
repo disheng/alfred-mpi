@@ -23,7 +23,8 @@ public class MPIConstants {
 	
 	public enum AbortReason {
 		WORK_SEND(1),
-		WORK_SEND_ACK(2);
+		WORK_SEND_ACK(2),
+		WORK_SIZE_MISMATCH(3);
 		
 		private int reason;
 		AbortReason(int reason) {

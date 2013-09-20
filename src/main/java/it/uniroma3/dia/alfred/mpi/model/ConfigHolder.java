@@ -8,10 +8,13 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import com.google.common.collect.Maps;
 
 public class ConfigHolder {
+	@JsonProperty("id")
+	private String uid;
 	@JsonProperty("configuration")
 	private Map<String,String> configurationMap;
 	
 	public ConfigHolder() {}
+	public ConfigHolder(String id) { this.uid = id; }
 	
 	@JsonIgnore
 	public String getConfigurationValue(String key) {
@@ -29,5 +32,15 @@ public class ConfigHolder {
 		}
 		
 		return this.configurationMap.put(key, value);
+	}
+
+	@JsonIgnore
+	public String getUid() {
+		return uid;
+	}
+
+	@JsonIgnore
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 }
