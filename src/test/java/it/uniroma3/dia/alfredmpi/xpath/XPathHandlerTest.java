@@ -1,6 +1,7 @@
 package it.uniroma3.dia.alfredmpi.xpath;
 
 import static org.junit.Assert.*;
+import it.uniroma3.dia.alfred.xpath.XPathHandler;
 
 import model.Page;
 import org.junit.Before;

@@ -1,6 +1,6 @@
-package it.uniroma3.dia.alfredmpi.model.serializer;
+package it.uniroma3.dia.alfred.mpi.model.serializer;
 
-import it.uniroma3.dia.alfredmpi.model.ConfigHolder;
+import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,6 +34,14 @@ public class ConfigHolderSerializable {
 		}
 		
 		return returnRef;
+	}
+	
+	public static void toJsonFile(ConfigHolder input, String filePath) {
+		try {
+			jacksonMapper.writeValue(new File(filePath), input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static ConfigHolder fromJsonFile(String filePath) {

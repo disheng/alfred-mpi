@@ -1,14 +1,14 @@
 package project.mwe;
 
+import mpi.MPI;
+import mpi.MPIException;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
-import mpi.MPI;
-import mpi.MPIException;
 
 public class MPIExample {
 
@@ -19,6 +19,7 @@ public class MPIExample {
 		Options cmdLineOptions = new Options();
 		cmdLineOptions.addOption("p", "rank", false, "run rank example");
 		cmdLineOptions.addOption("r", "ring", false, "run ring example");
+		cmdLineOptions.addOption("a", "alfred-test", false, "run alfred example");
 		
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd;
@@ -44,7 +45,14 @@ public class MPIExample {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else {
+		} else if (cmd.hasOption("a")) {
+			try {
+				MPIAlfred.main(args);
+			} catch (MPIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else {
 			System.out.println("No valid switch");
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp( MPIExample.class.getName(), cmdLineOptions );
@@ -62,6 +70,7 @@ public class MPIExample {
 		MPI.Finalize();
 	}
 	
+	@SuppressWarnings("unused")
 	private static void ringExample(String[] args) throws MPIException {
 		MPI.Init(args) ;
 	      
