@@ -1,5 +1,7 @@
 package it.uniroma3.dia.alfred.mpi;
 
+import it.uniroma3.dia.alfred.ConfigHolderIdBroker;
+import it.uniroma3.dia.alfred.DomainHolder;
 import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
 
 import java.io.BufferedReader;
@@ -11,7 +13,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 public class ConfiguratorParser {
 	
