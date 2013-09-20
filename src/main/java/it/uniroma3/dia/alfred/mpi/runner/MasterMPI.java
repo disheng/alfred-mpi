@@ -5,6 +5,7 @@ import it.uniroma3.dia.alfred.mpi.model.serializer.ConfigHolderSerializable;
 import it.uniroma3.dia.alfred.mpi.runner.MPIConstants.AbortReason;
 import it.uniroma3.dia.alfred.mpi.runner.MPIConstants.TagValue;
 
+import java.util.Arrays;
 import java.util.List;
 
 import mpi.MPI;
@@ -31,7 +32,28 @@ public class MasterMPI {
 		}
 		
 		// System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]:send: " + confPerWorker);
+		int ackProcessesShare = sendWorkShares(processCountWithoutMaster, confPerWorker);
+		// System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]:recv: " + messageRecv[0]);
+		if (ackProcessesShare != inputConfigs.size()) {
+			RunAlfred.abort(AbortReason.WORK_SEND_ACK);
+		}
 		
+		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]:Dumping and sending stuff");
+//		RunAlfred.dumpConf(MPI.COMM_WORLD.Rank(), inputConfigs);
+		
+		sendConfs(confPerWorker, inputConfigs);
+		
+		// Synchro after thread execution
+		MPI.COMM_WORLD.Barrier();
+		
+		// Recv boolean results
+		List<Boolean> processesResult = recvBooleanResults(confPerWorker);
+		
+		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]:Results: " + processesResult);
+		// TODO: Do smth meaningful with results
+	}
+
+	private static int sendWorkShares(int processCountWithoutMaster, List<Integer> confPerWorker) {
 		int[] messageSend = new int[1];
 		int[] messageRecv = new int[1];
 		messageSend[0] = 0;
@@ -56,18 +78,16 @@ public class MasterMPI {
 			RunAlfred.abort(AbortReason.WORK_SEND_ACK);
 		}
 		
-		// System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]:recv: " + messageRecv[0]);
-		if (messageRecv[0] != inputConfigs.size()) {
-			RunAlfred.abort(AbortReason.WORK_SEND_ACK);
-		}
-		
-		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]:Dumping and sending stuff");
-		RunAlfred.dumpConf(MPI.COMM_WORLD.Rank(), inputConfigs);
-		
+		return messageRecv[0];
+	}
+	
+	private static void sendConfs(List<Integer> confPerWorker, List<ConfigHolder> inputConfigs) {
 		int slaveId = 1;
 		int confSent = 0;
 		int nextLimit = 0;
 		char[] localBuffer;
+		int[] messageSend = new int[1];
+		
 		for(Integer slaveSend: confPerWorker) {
 //			System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: Begin slave id: " + slaveId);
 			
@@ -77,17 +97,43 @@ public class MasterMPI {
 				messageSend[0] = localBuffer.length;
 		
 //				System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: Sending to " + slaveId + " conf id: " + inputConfigs.get(i).getUid() + " - len: " + localBuffer.length);
-				MPI.COMM_WORLD.Send(messageSend, 0, 1, MPI.INT, slaveId, TagValue.TAG_CONF_LEN.getValue());
-				MPI.COMM_WORLD.Send(localBuffer, 0, localBuffer.length, MPI.CHAR, slaveId, TagValue.TAG_CONF_DATA.getValue());
+				try {
+					MPI.COMM_WORLD.Send(messageSend, 0, 1, MPI.INT, slaveId, TagValue.TAG_CONF_LEN.getValue());
+					MPI.COMM_WORLD.Send(localBuffer, 0, localBuffer.length, MPI.CHAR, slaveId, TagValue.TAG_CONF_DATA.getValue());
+				} catch (MPIException e) {
+					e.printStackTrace();
+					RunAlfred.abort(AbortReason.WORK_SEND_DATA);
+				}
+				
 //				System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: Done conf id: " + inputConfigs.get(i).getUid());
 			}
 			
 //			System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: Done slave id: " + slaveId);
 			slaveId = slaveId + 1;
 		}
-		
-		MPI.COMM_WORLD.Barrier();
-		// TODO: Recv boolean results
 	}
+	
+	private static List<Boolean> recvBooleanResults(List<Integer> confPerWorker) {
+		int slaveId = 1;
+		byte[] bprocessesResult;
+		List<Boolean> processesResult = Lists.newArrayList();
+		for(Integer slaveSend: confPerWorker) {
+			bprocessesResult = new byte[slaveSend];
+			
+			try {
+				MPI.COMM_WORLD.Recv(bprocessesResult, 0, slaveSend, MPI.BYTE, slaveId, TagValue.TAG_CONF_RESULTS.getValue());
+			} catch (MPIException e) {
+				e.printStackTrace();
+				Arrays.fill(bprocessesResult, (byte)0);
+			}
+			
+			for(byte bCurr: bprocessesResult) {
+				processesResult.add(bCurr == 1);
+			}
 
+			slaveId = slaveId + 1;
+		}
+		
+		return processesResult;
+	}
 }

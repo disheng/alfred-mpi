@@ -19,9 +19,39 @@ import com.google.common.collect.Lists;
 public class SlaveMPI {
 
 	public static void run() throws MPIException {
-		List<ConfigHolder> confPerWorker = Lists.newArrayList();
-		int howMuchWork = 0;
+		List<ConfigHolder> confPerWorker;
+		int howMuchWork;
+		//
 		
+		howMuchWork = recvWorkQty();
+
+//		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]:recv: " + howMuchWork);
+		
+		ackWorkQty(howMuchWork);
+		
+//		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]:end");
+		
+		// Recv confs
+		confPerWorker = recvConfigs(howMuchWork);
+		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: Conf("+confPerWorker.size()+") receive done");
+		
+//		RunAlfred.dumpConf(MPI.COMM_WORLD.Rank(), confPerWorker);
+		
+		if (confPerWorker.size() != howMuchWork) {
+			RunAlfred.abort(AbortReason.WORK_SIZE_MISMATCH);
+		}
+		
+		List<Boolean> execResults = runThreads(MPI.COMM_WORLD.Rank(), confPerWorker);
+		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: ConfResults: " + execResults);
+		
+		// Synchro after thread execution
+		MPI.COMM_WORLD.Barrier();
+		
+		// Send to master to know how it went
+		sendResults(howMuchWork, execResults);
+	}
+	
+	private static int recvWorkQty() {
 		int[] messageSend = new int[1];
 		int[] messageRecv = new int[1];
 		messageSend[0] = 0;
@@ -34,47 +64,55 @@ public class SlaveMPI {
 			RunAlfred.abort(AbortReason.WORK_SEND);
 		}
 		
-		howMuchWork = messageRecv[0];
-//		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]:recv: " + howMuchWork);
+		return messageRecv[0];
+	}
+	
+	private static void ackWorkQty(int howMuchWork) {
+		int[] messageSend = new int[1];
+		int[] messageRecv = new int[1];
+		messageSend[0] = howMuchWork;
+		messageRecv[0] = 0;	
 		
-		messageSend[0] = messageRecv[0];
-		messageRecv[0] = 0;
 		try {
 			MPI.COMM_WORLD.Reduce(messageSend, 0, messageRecv, 0, 1, MPI.INT, MPI.SUM, MPIConstants.MASTER);
 		} catch (MPIException e) {
 			e.printStackTrace();
 			RunAlfred.abort(AbortReason.WORK_SEND_ACK);
 		}
+	}
+	
+	private static List<ConfigHolder> recvConfigs(int howMuchWork) {
+		List<ConfigHolder> confPerWorker = Lists.newArrayList();
 		
-//		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]:end");
-		
-		// Recv confs
 		char[] stringRecvBuffer;
+		int[] messageRecv = new int[1];
 		messageRecv[0] = 0;
+		
 //		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: Want to receive " + howMuchWork);
 		for(int i = 0; i < howMuchWork; ++i) {
-			MPI.COMM_WORLD.Recv(messageRecv, 0, 1, MPI.INT, MPIConstants.MASTER, TagValue.TAG_CONF_LEN.getValue());
-//			System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: Receiving conf len " + messageRecv[0]);
-			stringRecvBuffer = new char[messageRecv[0]];
-			MPI.COMM_WORLD.Recv(stringRecvBuffer, 0, messageRecv[0], MPI.CHAR, MPIConstants.MASTER, TagValue.TAG_CONF_DATA.getValue());
-			confPerWorker.add( ConfigHolderSerializable.fromJson(String.valueOf(stringRecvBuffer)) );
-//			System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: Receiving conf " + confPerWorker.get(confPerWorker.size() - 1).getUid() );
+			try {
+				MPI.COMM_WORLD.Recv(messageRecv, 0, 1, MPI.INT, MPIConstants.MASTER, TagValue.TAG_CONF_LEN.getValue());
+				stringRecvBuffer = new char[messageRecv[0]];
+//				System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: Receiving conf len " + messageRecv[0]);				
+				MPI.COMM_WORLD.Recv(stringRecvBuffer, 0, messageRecv[0], MPI.CHAR, MPIConstants.MASTER, TagValue.TAG_CONF_DATA.getValue());				
+				confPerWorker.add( ConfigHolderSerializable.fromJson(String.valueOf(stringRecvBuffer)) );
+//				System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: Receiving conf " + confPerWorker.get(confPerWorker.size() - 1).getUid() );				
+			} catch (MPIException e) {
+				e.printStackTrace();
+				RunAlfred.abort(AbortReason.WORK_RECV_DATA);
+			}
 		}
 		
-		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: Conf("+confPerWorker.size()+") receive done");
-		
-		RunAlfred.dumpConf(MPI.COMM_WORLD.Rank(), confPerWorker);
-		
-		if (confPerWorker.size() != howMuchWork) {
-			RunAlfred.abort(AbortReason.WORK_SIZE_MISMATCH);
+		return confPerWorker;
+	}
+	
+	private static void sendResults(int howMuchWork, List<Boolean> execResults) throws MPIException {
+		byte[] bDataSend = new byte[howMuchWork];
+		for(int i = 0; i < bDataSend.length; ++i) {
+			bDataSend[i] = (byte) (execResults.get(i) ? 1 : 0);
 		}
 		
-		List<Boolean> execResults = runThreads(MPI.COMM_WORLD.Rank(), confPerWorker);
-		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: ConfResults: " + execResults);
-		
-		MPI.COMM_WORLD.Barrier();
-		
-		// TODO: send to master to know how it went
+		MPI.COMM_WORLD.Send(bDataSend, 0, bDataSend.length, MPI.BYTE, MPIConstants.MASTER, TagValue.TAG_CONF_RESULTS.getValue());
 	}
 	
 	private static List<Boolean> runThreads(int rank, List<ConfigHolder> confPerWorker) {
