@@ -1,5 +1,6 @@
 package it.uniroma3.dia.alfred.mpi.runner;
 
+import java.util.Random;
 import java.util.concurrent.Callable;
 
 import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
@@ -19,7 +20,7 @@ public class SlaveMPIThread implements Callable<Boolean> {
 		// TODO Auto-generated method stub
 		System.out.println("Process["+this.processRank+"] - Thread["+Thread.currentThread().getId()+"]: Working on conf " + this.myCfg.getUid());
 		
-		return true;
+		return new Random(System.nanoTime()).nextBoolean();
 	}
 
 }
