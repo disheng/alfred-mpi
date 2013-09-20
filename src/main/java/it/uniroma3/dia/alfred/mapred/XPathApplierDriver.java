@@ -31,9 +31,12 @@ public class XPathApplierDriver extends Configured implements Tool {
 		*/
 		
 		long start = System.currentTimeMillis();
+		
+		//TODO Connessione con S3 e gestione input slit
+
 
 		Configuration conf = new Configuration();		
-		Job job = new Job(conf,NAME+"Apply Xpath on page set and save result");
+		Job job = new Job(conf,NAME+" : Apply Xpath on page set and save result");
 		job.setJarByClass(XPathApplierDriver.class);	
 		
 		//TODO (input file from s3, file output on s3?, map/reducer schema?)		
