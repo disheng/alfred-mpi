@@ -1,4 +1,4 @@
-package it.uniroma3.dia.alfredmpi.model;
+package it.uniroma3.dia.alfredmpi;
 
 import java.util.Map;
 
@@ -7,11 +7,12 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.google.common.collect.Maps;
 
-public class ConfigHolder {
+public class DomainHolder {
+
 	@JsonProperty("configuration")
 	private Map<String,String> configurationMap;
 	
-	public ConfigHolder() {}
+	public DomainHolder() {}
 	
 	@JsonIgnore
 	public String getConfigurationValue(String key) {
@@ -33,10 +34,6 @@ public class ConfigHolder {
 
 	public Map<String, String> getConfigurationMap() {
 		return configurationMap;
-	}
-
-	public void setConfigurationMap(Map<String, String> configurationMap) {
-		this.configurationMap = configurationMap;
 	}
 	
 }
