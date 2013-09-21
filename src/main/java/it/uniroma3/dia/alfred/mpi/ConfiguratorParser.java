@@ -22,7 +22,6 @@ public class ConfiguratorParser {
 	private final static String DOMAIN_KEY_NAME = "domains"; 
 	
 	// File that contains all the description about domains
-	@SuppressWarnings("unused")
 	private final static String MAIN_DOMAIN_FILE = "domains.properties";
 	
 	// Delimiter used in the properties file
@@ -138,7 +137,7 @@ public class ConfiguratorParser {
 		
 		// open the file
 		if (filePathDomains == null){
-			reader = new BufferedReader(new InputStreamReader(ConfiguratorParser.class.getResourceAsStream(MAIN_CONF_FILE)));
+			reader = new BufferedReader(new InputStreamReader(ConfiguratorParser.class.getResourceAsStream(MAIN_DOMAIN_FILE)));
 		} else {
 			try {
 				reader = new BufferedReader(new FileReader(filePathDomains));
