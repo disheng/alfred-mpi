@@ -2,7 +2,11 @@ package it.uniroma3.dia.alfred.mpi;
 
 import java.util.UUID;
 
-public class ConfigHolderIdBroker {
+class ConfigHolderIdBroker {
+	// static class
+	private ConfigHolderIdBroker() {}
+	
+	
 	private static final String ID_DIVISOR = "_";
 
 	public static String getId() {

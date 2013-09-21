@@ -13,7 +13,8 @@ import mpi.MPIException;
 
 import com.google.common.collect.Lists;
 
-public class MasterMPI {
+class MasterMPI {
+	private MasterMPI() {}
 
 	public static void run(List<ConfigHolder> inputConfigs, int processCountWithoutMaster) throws MPIException {
 		List<Integer> confPerWorker = Lists.newArrayList();

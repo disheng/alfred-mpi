@@ -1,6 +1,6 @@
 package it.uniroma3.dia.alfred.mpi.runner;
 
-public class MPIConstants {
+class MPIConstants {
 	private MPIConstants() {}
 
 	public static final int MASTER = 0;

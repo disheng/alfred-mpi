@@ -16,7 +16,8 @@ import mpi.MPIException;
 
 import com.google.common.collect.Lists;
 
-public class SlaveMPI {
+class SlaveMPI {
+	private SlaveMPI() {}
 
 	public static void run() throws MPIException {
 		List<ConfigHolder> confPerWorker;

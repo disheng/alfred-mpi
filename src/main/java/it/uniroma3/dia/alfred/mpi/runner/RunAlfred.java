@@ -30,7 +30,7 @@ public class RunAlfred {
 		MPI.Finalize();
 	}
 	
-	public static void abort(MPIConstants.AbortReason aReason) {
+	static void abort(MPIConstants.AbortReason aReason) {
 		try {
 			MPI.COMM_WORLD.Abort(aReason.getReason());
 		} catch(MPIException e) {
@@ -41,9 +41,12 @@ public class RunAlfred {
 		System.exit(aReason.getReason());
 	}
 	
-	public static void dumpConf(int rank, List<ConfigHolder> listCfg) {
+	static void dumpConf(int rank, List<ConfigHolder> listCfg) {
 		for(ConfigHolder currCfg: listCfg) {
 			ConfigHolderSerializable.toJsonFile(currCfg, rank + "-" + currCfg.getUid());
 		}
 	}
+	
+	// private static
+	private RunAlfred() {};
 }

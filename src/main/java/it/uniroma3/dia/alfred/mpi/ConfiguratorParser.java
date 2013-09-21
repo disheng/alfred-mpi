@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ConfiguratorParser {
+	// static class
+	private ConfiguratorParser() {}
 	
 	// File that contains the all the configurations
 	private final static String MAIN_CONF_FILE = "configurations.properties";
