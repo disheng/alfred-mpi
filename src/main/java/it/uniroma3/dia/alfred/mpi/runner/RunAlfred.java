@@ -19,9 +19,10 @@ public class RunAlfred {
 		int myrank = MPI.COMM_WORLD.Rank();
 		int size = MPI.COMM_WORLD.Size();
 		
-		Collections.shuffle(inputConfigs, new Random(System.nanoTime()));
-		
 		if (myrank == RANK_MASTER) {
+			// Shuffle order
+			Collections.shuffle(inputConfigs, new Random(System.nanoTime()));
+			// Run master
 			MasterMPI.run(inputConfigs, size - 1);
 		} else {
 			SlaveMPI.run();
