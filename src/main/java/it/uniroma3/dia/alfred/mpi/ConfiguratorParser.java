@@ -1,8 +1,7 @@
 package it.uniroma3.dia.alfred.mpi;
 
-import it.uniroma3.dia.alfred.ConfigHolderIdBroker;
-import it.uniroma3.dia.alfred.DomainHolder;
 import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
+import it.uniroma3.dia.alfred.mpi.model.DomainHolder;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -21,6 +20,7 @@ public class ConfiguratorParser {
 	private final static String DOMAIN_KEY_NAME = "domains"; 
 	
 	// File that contains all the description about domains
+	@SuppressWarnings("unused")
 	private final static String MAIN_DOMAIN_FILE = "domains.properties";
 	
 	// Delimiter used in the properties file
@@ -66,6 +66,9 @@ public class ConfiguratorParser {
 		String key = null;	
 		String value = null;
 		
+		// We're parsing this
+		String currentConfigurationName = null;
+		
 		try {
 			while( (currentLine = reader.readLine()) != null) {
 				
@@ -76,7 +79,7 @@ public class ConfiguratorParser {
 				
 				// if contains a new definition
 				if (currentLine.matches("\\[.*\\]")) {
-					ConfigHolderIdBroker.setName(currentLine.substring(1, currentLine.length()-1));
+					currentConfigurationName = currentLine.substring(1, currentLine.length()-1);
 					continue;
 				}
 				
@@ -86,9 +89,16 @@ public class ConfiguratorParser {
 				if (key.equals(DOMAIN_KEY_NAME)) {
 					for (String domainName : value.split(SECOND_DELIMITER)){
 						currentConfigHolder = new ConfigHolder();
-						currentConfigHolder.setConfigurationValue("id", ConfigHolderIdBroker.getId(domainName));
-						currentConfigHolder.getConfigurationMap().putAll(key2value);
-						currentConfigHolder.getConfigurationMap().putAll(name2domain.get(domainName).getConfigurationMap());
+						currentConfigHolder.setUid(ConfigHolderIdBroker.getId(currentConfigurationName, domainName));
+						
+						// Put config inside configuration holder
+						for(String keyMap: key2value.keySet()) {
+							currentConfigHolder.setConfigurationValue(keyMap, key2value.get(keyMap));
+						}
+						
+						// Put domain configuration
+						currentConfigHolder.setAssociatedDomain(name2domain.get(domainName));
+						
 						configList.add(currentConfigHolder);
 					}
 					key2value.clear();

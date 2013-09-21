@@ -12,6 +12,8 @@ public class ConfigHolder {
 	private String uid;
 	@JsonProperty("configuration")
 	private Map<String,String> configurationMap;
+	@JsonProperty("domain")
+	private DomainHolder associatedDomain;
 	
 	public ConfigHolder() {}
 	public ConfigHolder(String id) { this.uid = id; }
@@ -33,14 +35,6 @@ public class ConfigHolder {
 		
 		return this.configurationMap.put(key, value);
 	}
-
-	public Map<String, String> getConfigurationMap() {
-		return configurationMap;
-	}
-
-	public void setConfigurationMap(Map<String, String> configurationMap) {
-		this.configurationMap = configurationMap;
-	}
 	
 	@JsonIgnore
 	public String getUid() {
@@ -52,4 +46,13 @@ public class ConfigHolder {
 		this.uid = uid;
 	}
 
+	@JsonIgnore
+	public DomainHolder getAssociatedDomain() {
+		return associatedDomain;
+	}
+	
+	@JsonIgnore
+	public void setAssociatedDomain(DomainHolder associatedDomain) {
+		this.associatedDomain = associatedDomain;
+	}
 }
