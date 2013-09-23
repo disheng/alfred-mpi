@@ -92,7 +92,12 @@ public class ConfiguratorParser {
 				}
 				
 				key = currentLine.split(DELIMITER)[0];
-				value = currentLine.split(DELIMITER)[1];
+				
+				if (currentLine.matches(".*"+DELIMITER+".*"+DELIMITER+".*")) {
+					value = currentLine.substring(key.length()+1);
+				} else {
+					value = currentLine.split(DELIMITER)[1];
+				}
 				
 				if (key.equals(ConfigHolderKeys.DOMAINS_KEY)) {
 					for (String domainName : value.split(SECOND_DELIMITER)){
@@ -108,6 +113,7 @@ public class ConfiguratorParser {
 						currentConfigHolder.setAssociatedDomain(name2domain.get(domainName));
 						
 						configList.add(currentConfigHolder);
+						
 					}
 					key2value.clear();
 					continue;
@@ -175,18 +181,26 @@ public class ConfiguratorParser {
 				// if contains a new definition
 				if (currentLine.matches("\\[.*\\]")) {
 					currentDomainHolder = new DomainHolder();
-					name2domain.put(currentLine.substring(1, currentLine.length()-1), currentDomainHolder);
 					continue;
 				}
 				
 				key = currentLine.split(DELIMITER)[0];
-				value = currentLine.split(DELIMITER)[1];
 				
-				if (currentLine.equalsIgnoreCase(DomainHolderKeys.DOMAIN_ID_KEY) ||
-						currentLine.equalsIgnoreCase(DomainHolderKeys.FIRST_PAGE_KEY) ||
-						currentLine.equalsIgnoreCase(DomainHolderKeys.BUCKET_S3_KEY) ||
-						currentLine.equalsIgnoreCase(DomainHolderKeys.SITE_KEY)
-						){
+				if (currentLine.matches(".*"+DELIMITER+".*"+DELIMITER+".*")) {
+					value = currentLine.substring(key.length()+1);
+				} else {
+					value = currentLine.split(DELIMITER)[1];
+				}
+
+				if (key.equalsIgnoreCase(DomainHolderKeys.DOMAIN_ID_KEY)){
+					currentDomainHolder.setGoldenXPathMap(key, value);
+					name2domain.put(value, currentDomainHolder);
+					continue;
+				}
+				
+				if (key.equalsIgnoreCase(DomainHolderKeys.FIRST_PAGE_KEY) ||
+						key.equalsIgnoreCase(DomainHolderKeys.BUCKET_S3_KEY) ||
+						key.equalsIgnoreCase(DomainHolderKeys.SITE_KEY) ){
 					currentDomainHolder.setGoldenXPathMap(key, value);
 					continue;
 				}
