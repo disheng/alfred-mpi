@@ -13,8 +13,16 @@ import com.google.common.collect.Lists;
 
 public class GenerateLazyPagesFromDomain {
 	private GenerateLazyPagesFromDomain() {}
+	
+	public static Page getGoldenPage(DomainHolder domainConf) {
+		String firstPageKey = domainConf.getConfigurationValue(DomainHolderKeys.FIRST_PAGE_KEY);
+		String bucketValue = domainConf.getConfigurationValue(DomainHolderKeys.BUCKET_S3_KEY);
+		
+		List<Page> firstPage = convertUriToPage(Lists.newArrayList(firstPageKey), bucketValue);
+		return firstPage.get(0);
+	}
 
-	public static List<Page> runDownloader(DomainHolder domainConf) {
+	public static List<Page> getPages(DomainHolder domainConf) {
 		List<String> uriToRetrieve = Lists.newArrayList();
 		
 		IncrementalIdRetriever iidFake = new IncrementalIdRetriever();
@@ -59,7 +67,7 @@ public class GenerateLazyPagesFromDomain {
 		List<Page> pagesReturn = Lists.newLinkedList();
 		
 		for(String uri: uriList) {
-			pagesReturn.add(new LazyPageS3ProxyMPI(uri, bucketName));
+			pagesReturn.add(new LazyPageProxyS3(uri, bucketName));
 		}
 		
 		return pagesReturn;

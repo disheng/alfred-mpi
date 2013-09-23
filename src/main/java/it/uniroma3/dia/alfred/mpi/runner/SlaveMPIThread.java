@@ -24,6 +24,10 @@ class SlaveMPIThread implements Callable<Boolean> {
 		
 		return new Random(System.nanoTime()).nextBoolean();
 	}
+	
+	private void runSingleExperiment() {
+		
+	}
 }
 
 // TODO:
