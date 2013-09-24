@@ -41,28 +41,29 @@ public class XPathApplierDriver extends Configured implements Tool {
 	public int run(String[] args) throws Exception {	
 
 		long start = System.currentTimeMillis();
-
+		
 		/* ARGS CHECK */
 		if (args.length < 4 && !(args.length >= 6)) {
-			System.err.println("Usage "+NAME+" <bucketName> <outputName> " +
-					"<numberOfKeys> <rulesPath> <optionalKeyPrefix> \n");
+			System.err.println("Usage "+NAME+" <pageBucketName> <xPathRulesPathS3>" +
+					" <outputPathS3> <numberOfKeys> <optionalKeyPrefix> \n");
 			ToolRunner.printGenericCommandUsage(System.err);
 			return -1;
 		}
 
-		String nomeBucket = args[0];
-		String inputPath = "s3n://"+nomeBucket;
-		String outputPath = args[1];
+		String nomeBucketPagine = args[0];
+		//laciato così per il momento
+		String inputPath = "s3n://"+nomeBucketPagine;
+		String inputRulesPathS3 = args[1];
+		String outputPathS3 = args[2];
 
-		int numeroChiavi = Integer.parseInt(args[2]);
-		String rulesPath = args[3];
-		String prefisso = "";	
+		int numeroChiavi = Integer.parseInt(args[3]);
 
-		int numeroParametri = args.length;
-		if (numeroParametri > 4) {
-			prefisso = args[4];
-		}			
+		String prefisso = "";
 		
+		if(args[4] != null){				
+			prefisso = args[4];
+		}
+
 		Configuration conf = new Configuration();
 
 		// Add resources
@@ -71,14 +72,14 @@ public class XPathApplierDriver extends Configured implements Tool {
 		conf.addResource("mapred-default.xml");
 		conf.addResource("mapred-site.xml");
 
-		conf.set(S3_BUCKET_NAME, nomeBucket);
+		conf.set(S3_BUCKET_NAME, nomeBucketPagine);
 		conf.set(S3_KEY_PREFIX, prefisso);
 		conf.setInt(S3_NUM_OF_KEYS_PER_MAPPER, numeroChiavi);
 
 		Job job = new Job(conf,NAME+" : Apply Xpath on page set and save result");	
 
-		//cacheRules(conf); //copio le regole su HDFS
-		DistributedCache.addCacheFile(new Path("s3n://alf-emr/rules/"+rulesPath).toUri(), job.getConfiguration());
+		// Carico nella distr. il file di configurazione contenente le regole xPath
+		DistributedCache.addCacheFile(new Path(inputRulesPathS3).toUri(), job.getConfiguration());
 
 		job.setMapOutputKeyClass(Text.class); //NOTA: S3ObjectWritable è usabile solo come input
 		job.setMapOutputValueClass(MapWritable.class);
@@ -90,12 +91,14 @@ public class XPathApplierDriver extends Configured implements Tool {
 		job.setReducerClass(XPathApplierReducer.class);
 
 		job.setInputFormatClass(S3ObjectInputFormat.class);
+		
+		//File map<pagina, list<xpath,res>> su S3
 		job.setOutputFormatClass(SequenceFileOutputFormat.class);
 
 		// Set the input path
 		CombineFileInputFormat.setInputPaths(job, inputPath);
 		// Set the output path
-		SequenceFileOutputFormat.setOutputPath(job, new Path(outputPath));
+		SequenceFileOutputFormat.setOutputPath(job, new Path(outputPathS3));
 
 		// Set the jar file to run
 		job.setJarByClass(XPathApplierDriver.class);
