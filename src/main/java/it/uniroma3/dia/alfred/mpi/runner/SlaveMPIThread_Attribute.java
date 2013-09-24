@@ -59,7 +59,9 @@ public class SlaveMPIThread_Attribute implements Callable<Boolean> {
 		int occ = 1; // this.experiments.getOccurrence(domain, attribute);
 		
 		// TODO: what to call here?
-		
+		// ExperimentCrowdManagerRunner e = new ExperimentCrowdManagerRunner(allPages, goldenPage,url2Value, occ, null, # max_expressiveness, WORKER_FUNCTION.EXPONENTIAL, 0.20);
+		// String s = e.call();
+		// è orribile il call ... ma per ora mi sembra il male minore :)
 		
 		return new Random(System.nanoTime()).nextBoolean();
 	}
