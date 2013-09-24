@@ -1,12 +1,11 @@
 package it.uniroma3.dia.alfred.mpi;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
 import it.uniroma3.dia.alfred.mpi.model.constants.DomainHolderKeys;
 
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

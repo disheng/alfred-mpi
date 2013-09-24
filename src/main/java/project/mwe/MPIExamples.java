@@ -3,64 +3,8 @@ package project.mwe;
 import mpi.MPI;
 import mpi.MPIException;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-
-public class MPIExample {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		Options cmdLineOptions = new Options();
-		cmdLineOptions.addOption("p", "rank", false, "run rank example");
-		cmdLineOptions.addOption("r", "ring", false, "run ring example");
-		cmdLineOptions.addOption("a", "alfred-test", false, "run alfred example");
-		
-		CommandLineParser parser = new GnuParser();
-		CommandLine cmd;
-		
-		try {
-			cmd = parser.parse( cmdLineOptions, args);
-		} catch (ParseException e) {
-			e.printStackTrace();
-			return;
-		}
-		
-		if (cmd.hasOption("p")) {
-			try {
-				rankExample(args);
-			} catch (MPIException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else if (cmd.hasOption("r")) {
-			try {
-				ringExample(args);
-			} catch (MPIException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else if (cmd.hasOption("a")) {
-			try {
-				MPIAlfred.main(args);
-			} catch (MPIException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}else {
-			System.out.println("No valid switch");
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp( MPIExample.class.getName(), cmdLineOptions );
-		}
-
-	}
-
-	private static void rankExample(String[] args) throws MPIException {
+public class MPIExamples {
+	public static void rankExample(String[] args) throws MPIException {
 		MPI.Init(args);
 
 		int myrank = MPI.COMM_WORLD.Rank();
@@ -71,7 +15,7 @@ public class MPIExample {
 	}
 	
 	@SuppressWarnings("unused")
-	private static void ringExample(String[] args) throws MPIException {
+	public static void ringExample(String[] args) throws MPIException {
 		MPI.Init(args) ;
 	      
 		int source;  // Rank of sender
