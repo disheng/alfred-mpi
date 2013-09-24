@@ -57,9 +57,9 @@ public class ConfiguratorParserTest {
 		assertEquals("ALF#ALFRED",
 				currentConfigHolder.getConfigurationValue("algorithm"));
 		assertEquals("//*[@itemprop='name']/text()",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap("Title"));
+				currentConfigHolder.getAssociatedDomain().getGoldenXPath("Title"));
 		assertEquals("//*[@itemprop='reviewCount']/text()",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap("number_of_Reviews"));
+				currentConfigHolder.getAssociatedDomain().getGoldenXPath("number_of_Reviews"));
 		
 		currentConfigHolder = configHoldersList.get(1);
 		assertEquals("conf1_attori",
@@ -85,9 +85,9 @@ public class ConfiguratorParserTest {
 		assertEquals("ALF#ALFRED",
 				currentConfigHolder.getConfigurationValue("algorithm"));
 		assertEquals("//*[@itemprop='name']/text()#NO",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap("Name"));
+				currentConfigHolder.getAssociatedDomain().getGoldenXPath("Name"));
 		assertEquals("//*[@itemprop='birthDate']/A[1]/text()",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap("Birth_date"));
+				currentConfigHolder.getAssociatedDomain().getGoldenXPath("Birth_date"));
 		
 		currentConfigHolder = configHoldersList.get(3);
 		assertEquals("conf2_albums",
@@ -113,9 +113,9 @@ public class ConfiguratorParserTest {
 		assertEquals("ALFRED",
 				currentConfigHolder.getConfigurationValue("algorithm"));
 		assertEquals("//*[@class='release-date']/text()",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap("Release date"));
+				currentConfigHolder.getAssociatedDomain().getGoldenXPath("Release date"));
 		assertEquals("//*[@class='genres']/UL/LI[1]/A/text()",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap("Genres"));
+				currentConfigHolder.getAssociatedDomain().getGoldenXPath("Genres"));
 		
 		currentConfigHolder = configHoldersList.get(6);
 		assertEquals("conf3_movies",
@@ -141,9 +141,9 @@ public class ConfiguratorParserTest {
 		assertEquals("ALF#ALFRED",
 				currentConfigHolder.getConfigurationValue("algorithm"));
 		assertEquals("//*[@itemprop='ratingValue']/text()",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap("Rating"));
+				currentConfigHolder.getAssociatedDomain().getGoldenXPath("Rating"));
 		assertEquals("//*[@itemprop='reviewCount']/text()",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap("number_of_Reviews"));
+				currentConfigHolder.getAssociatedDomain().getGoldenXPath("number_of_Reviews"));
 		
 	}
 

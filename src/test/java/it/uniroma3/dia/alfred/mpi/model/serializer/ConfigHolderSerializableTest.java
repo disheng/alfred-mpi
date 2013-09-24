@@ -36,7 +36,7 @@ public class ConfigHolderSerializableTest {
 			dhStuff.setConfigurationValue(UUID.randomUUID().toString(), UUID.randomUUID().toString());
 		}
 		for(int i = 0; i < randomGen.nextInt(MAX_VALUES); ++i) {
-			dhStuff.setGoldenXPathMap(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+			dhStuff.setGoldenXPath(UUID.randomUUID().toString(), UUID.randomUUID().toString());
 		}
 		
 		cfgHolder.setAssociatedDomain(dhStuff);

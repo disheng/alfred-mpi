@@ -10,7 +10,8 @@ class MPIConstants {
 		TAG_SIZE_CONF(0),
 		TAG_CONF_LEN(1),
 		TAG_CONF_DATA(2),
-		TAG_CONF_RESULTS(3);
+		TAG_CONF_RESULTS_SIZE(3),
+		TAG_CONF_RESULTS(4);
 		
 		private int value;
 		TagValue(int tag) {

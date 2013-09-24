@@ -205,7 +205,7 @@ public class ConfiguratorParser {
 					continue;
 				}
 				
-				currentDomainHolder.setGoldenXPathMap(key,value);
+				currentDomainHolder.setGoldenXPath(key,value);
 				
 			}
 		} catch (IOException e) {

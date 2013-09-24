@@ -49,7 +49,7 @@ class SlaveMPI {
 		MPI.COMM_WORLD.Barrier();
 		
 		// Send to master to know how it went
-		sendResults(howMuchWork, execResults);
+		sendResults(execResults);
 	}
 	
 	private static int recvWorkQty() {
@@ -107,12 +107,16 @@ class SlaveMPI {
 		return confPerWorker;
 	}
 	
-	private static void sendResults(int howMuchWork, List<Boolean> execResults) throws MPIException {
-		byte[] bDataSend = new byte[howMuchWork];
+	private static void sendResults(List<Boolean> execResults) throws MPIException {
+		int[] messageSend = new int[1];
+		messageSend[0] = execResults.size();
+		
+		byte[] bDataSend = new byte[execResults.size()];
 		for(int i = 0; i < bDataSend.length; ++i) {
 			bDataSend[i] = (byte) (execResults.get(i) ? 1 : 0);
 		}
 		
+		MPI.COMM_WORLD.Send(messageSend, 0, 1, MPI.INT, MPIConstants.MASTER, TagValue.TAG_CONF_RESULTS_SIZE.getValue());
 		MPI.COMM_WORLD.Send(bDataSend, 0, bDataSend.length, MPI.BYTE, MPIConstants.MASTER, TagValue.TAG_CONF_RESULTS.getValue());
 	}
 	
@@ -120,8 +124,15 @@ class SlaveMPI {
 		// Execute configurations in parallel if necessary
         ExecutorService executor = Executors.newFixedThreadPool(Math.max(Runtime.getRuntime().availableProcessors() - 1, 1));
         List<Future<Boolean>> threadResults = Lists.newArrayList();
+        
+        List<String> attributeList;
+        
         for (ConfigHolder cfgCurr: confPerWorker) {
-        	threadResults.add(executor.submit(new SlaveMPIThread(cfgCurr, rank)));
+    		attributeList = cfgCurr.getAssociatedDomain().getXPathNames();
+    		
+    		for(String attrCurrent: attributeList) {
+    			threadResults.add(executor.submit(new SlaveMPIThread_Attribute(cfgCurr, attrCurrent, rank)));
+    		}
         }
         executor.shutdown();
         while (!executor.isTerminated()) {}	

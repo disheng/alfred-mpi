@@ -48,7 +48,7 @@ class MasterMPI {
 		MPI.COMM_WORLD.Barrier();
 		
 		// Recv boolean results
-		List<Boolean> processesResult = recvBooleanResults(confPerWorker);
+		List<Boolean> processesResult = recvBooleanResults(processCountWithoutMaster);
 		
 		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]:Results: " + processesResult);
 		// TODO: Do smth meaningful with results
@@ -114,15 +114,17 @@ class MasterMPI {
 		}
 	}
 	
-	private static List<Boolean> recvBooleanResults(List<Integer> confPerWorker) {
-		int slaveId = 1;
-		byte[] bprocessesResult;
+	private static List<Boolean> recvBooleanResults(int processCountWithoutMaster) {
+		int[] messageRecv = new int[1];
+		byte[] bprocessesResult = new byte[1];
 		List<Boolean> processesResult = Lists.newArrayList();
-		for(Integer slaveSend: confPerWorker) {
-			bprocessesResult = new byte[slaveSend];
-			
+		
+		for(int id = 1; id <= processCountWithoutMaster; ++id) {
+
 			try {
-				MPI.COMM_WORLD.Recv(bprocessesResult, 0, slaveSend, MPI.BYTE, slaveId, TagValue.TAG_CONF_RESULTS.getValue());
+				MPI.COMM_WORLD.Recv(messageRecv, 0, 1, MPI.INT, id, TagValue.TAG_CONF_RESULTS_SIZE.getValue());
+				bprocessesResult = new byte[messageRecv[0]];
+				MPI.COMM_WORLD.Recv(bprocessesResult, 0, messageRecv[0], MPI.BYTE, id, TagValue.TAG_CONF_RESULTS.getValue());
 			} catch (MPIException e) {
 				e.printStackTrace();
 				Arrays.fill(bprocessesResult, (byte)0);
@@ -131,8 +133,6 @@ class MasterMPI {
 			for(byte bCurr: bprocessesResult) {
 				processesResult.add(bCurr == 1);
 			}
-
-			slaveId = slaveId + 1;
 		}
 		
 		return processesResult;

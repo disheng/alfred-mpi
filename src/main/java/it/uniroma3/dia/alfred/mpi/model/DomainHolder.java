@@ -1,10 +1,12 @@
 package it.uniroma3.dia.alfred.mpi.model;
 
+import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class DomainHolder {
@@ -17,48 +19,49 @@ public class DomainHolder {
 
 	@JsonIgnore
 	public String getConfigurationValue(String key) {
-		if (this.configurationMap == null) {
-			this.configurationMap = Maps.newHashMap();
-		}
+		lazyInitConfiguration();
 		
 		return this.configurationMap.get(key);
 	}
 	
 	@JsonIgnore
 	public String setConfigurationValue(String key, String value) {
-		if (this.configurationMap == null) {
-			this.configurationMap = Maps.newHashMap();
-		}
+		lazyInitConfiguration();
 		
 		return this.configurationMap.put(key, value);
 	}
-
-	@JsonIgnore
-	public Map<String, String> getConfigurationMap() {
-		return this.configurationMap;
-	}
 	
 	@JsonIgnore
-	public String getGoldenXPathMap(String key) {
-		if (this.goldenXPathMap == null) {
-			this.goldenXPathMap = Maps.newHashMap();
-		}
+	public String getGoldenXPath(String key) {
+		lazyInitGolden();
 		
 		return this.goldenXPathMap.get(key);
 	}
 	
 	@JsonIgnore
-	public String setGoldenXPathMap(String key, String value) {
-		if (this.goldenXPathMap == null) {
-			this.goldenXPathMap = Maps.newHashMap();
-		}
+	public String setGoldenXPath(String key, String value) {
+		lazyInitGolden();
 		
 		return this.goldenXPathMap.put(key, value);
 	}
 	
 	@JsonIgnore
-	public Map<String, String> getGoldenXPathMap() {
-		return this.goldenXPathMap;
+	public List<String> getXPathNames() {
+		lazyInitGolden();
+		
+		return Lists.newLinkedList(this.goldenXPathMap.keySet());
+	}
+	
+	private void lazyInitConfiguration() {
+		if (this.configurationMap == null) {
+			this.configurationMap = Maps.newHashMap();
+		}
+	}
+	
+	private void lazyInitGolden() {
+		if (this.goldenXPathMap == null) {
+			this.goldenXPathMap = Maps.newHashMap();
+		}
 	}
 
 	@Override
