@@ -60,4 +60,40 @@ public class DomainHolder {
 	public Map<String, String> getGoldenXPathMap() {
 		return this.goldenXPathMap;
 	}
+
+	@Override
+	@JsonIgnore
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((configurationMap == null) ? 0 : configurationMap.hashCode());
+		result = prime * result
+				+ ((goldenXPathMap == null) ? 0 : goldenXPathMap.hashCode());
+		return result;
+	}
+
+	@Override
+	@JsonIgnore
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DomainHolder other = (DomainHolder) obj;
+		if (configurationMap == null) {
+			if (other.configurationMap != null)
+				return false;
+		} else if (!configurationMap.equals(other.configurationMap))
+			return false;
+		if (goldenXPathMap == null) {
+			if (other.goldenXPathMap != null)
+				return false;
+		} else if (!goldenXPathMap.equals(other.goldenXPathMap))
+			return false;
+		return true;
+	}
 }

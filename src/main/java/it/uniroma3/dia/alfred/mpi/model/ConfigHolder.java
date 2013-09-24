@@ -55,4 +55,47 @@ public class ConfigHolder {
 	public void setAssociatedDomain(DomainHolder associatedDomain) {
 		this.associatedDomain = associatedDomain;
 	}
+	
+	@Override
+	@JsonIgnore
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((associatedDomain == null) ? 0 : associatedDomain.hashCode());
+		result = prime
+				* result
+				+ ((configurationMap == null) ? 0 : configurationMap.hashCode());
+		result = prime * result + ((uid == null) ? 0 : uid.hashCode());
+		return result;
+	}
+	
+	@Override
+	@JsonIgnore
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ConfigHolder other = (ConfigHolder) obj;
+		if (associatedDomain == null) {
+			if (other.associatedDomain != null)
+				return false;
+		} else if (!associatedDomain.equals(other.associatedDomain))
+			return false;
+		if (configurationMap == null) {
+			if (other.configurationMap != null)
+				return false;
+		} else if (!configurationMap.equals(other.configurationMap))
+			return false;
+		if (uid == null) {
+			if (other.uid != null)
+				return false;
+		} else if (!uid.equals(other.uid))
+			return false;
+		return true;
+	}
 }
