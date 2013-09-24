@@ -26,6 +26,5 @@ public class ConfigHolderKeys {
 	public final static String ITERATIONS_KEY = "iterations";
 	public final static String WORKER_SIMULATION_KEY = "worker_simulation";
 	public final static String ALGORITHM_KEY = "algorithm";
-	public final static String DOMAINS_KEY = "domains";
 
 }
