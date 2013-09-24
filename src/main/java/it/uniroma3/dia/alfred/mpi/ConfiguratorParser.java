@@ -193,7 +193,7 @@ public class ConfiguratorParser {
 				}
 
 				if (key.equalsIgnoreCase(DomainHolderKeys.DOMAIN_ID_KEY)){
-					currentDomainHolder.setGoldenXPathMap(key, value);
+					currentDomainHolder.setConfigurationValue(key, value);
 					name2domain.put(value, currentDomainHolder);
 					continue;
 				}
@@ -201,11 +201,11 @@ public class ConfiguratorParser {
 				if (key.equalsIgnoreCase(DomainHolderKeys.FIRST_PAGE_KEY) ||
 						key.equalsIgnoreCase(DomainHolderKeys.BUCKET_S3_KEY) ||
 						key.equalsIgnoreCase(DomainHolderKeys.SITE_KEY) ){
-					currentDomainHolder.setGoldenXPathMap(key, value);
+					currentDomainHolder.setConfigurationValue(key, value);
 					continue;
 				}
 				
-				currentDomainHolder.setConfigurationValue(key,value);
+				currentDomainHolder.setGoldenXPathMap(key,value);
 				
 			}
 		} catch (IOException e) {

@@ -38,13 +38,13 @@ public class ConfiguratorParserTest {
 		assertEquals("conf1_movies",
 				currentConfigHolder.getUid());
 		assertEquals("imdb",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap(DomainHolderKeys.SITE_KEY));
+				currentConfigHolder.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.SITE_KEY));
 		assertEquals("nome_bucket_1",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap(DomainHolderKeys.BUCKET_S3_KEY));
+				currentConfigHolder.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.BUCKET_S3_KEY));
 		assertEquals("movies",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap(DomainHolderKeys.DOMAIN_ID_KEY));
+				currentConfigHolder.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.DOMAIN_ID_KEY));
 		assertEquals("http://www.imdb.com/sections/dvd/?ref_=nb_mv_8_dvd",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap(DomainHolderKeys.FIRST_PAGE_KEY));
+				currentConfigHolder.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.FIRST_PAGE_KEY));
 		assertEquals("output1",
 				currentConfigHolder.getConfigurationValue("output_folder"));
 		assertEquals("1",
@@ -58,21 +58,21 @@ public class ConfiguratorParserTest {
 		assertEquals("ALF#ALFRED",
 				currentConfigHolder.getConfigurationValue("algorithm"));
 		assertEquals("//*[@itemprop='name']/text()",
-				currentConfigHolder.getAssociatedDomain().getConfigurationValue("Title"));
+				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap("Title"));
 		assertEquals("//*[@itemprop='reviewCount']/text()",
-				currentConfigHolder.getAssociatedDomain().getConfigurationValue("number_of_Reviews"));
+				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap("number_of_Reviews"));
 		
 		currentConfigHolder = configHoldersList.get(1);
 		assertEquals("conf1_attori",
 				currentConfigHolder.getUid());
 		assertEquals("imdb",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap(DomainHolderKeys.SITE_KEY));
+				currentConfigHolder.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.SITE_KEY));
 		assertEquals("nome_bucket_2",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap(DomainHolderKeys.BUCKET_S3_KEY));
+				currentConfigHolder.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.BUCKET_S3_KEY));
 		assertEquals("attori",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap(DomainHolderKeys.DOMAIN_ID_KEY));
+				currentConfigHolder.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.DOMAIN_ID_KEY));
 		assertEquals("http://www.imdb.com/chart/top?ref_=nb_mv_3_chttp",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap(DomainHolderKeys.FIRST_PAGE_KEY));
+				currentConfigHolder.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.FIRST_PAGE_KEY));
 		assertEquals("output1",
 				currentConfigHolder.getConfigurationValue("output_folder"));
 		assertEquals("1",
@@ -86,21 +86,21 @@ public class ConfiguratorParserTest {
 		assertEquals("ALF#ALFRED",
 				currentConfigHolder.getConfigurationValue("algorithm"));
 		assertEquals("//*[@itemprop='name']/text()#NO",
-				currentConfigHolder.getAssociatedDomain().getConfigurationValue("Name"));
+				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap("Name"));
 		assertEquals("//*[@itemprop='birthDate']/A[1]/text()",
-				currentConfigHolder.getAssociatedDomain().getConfigurationValue("Birth_date"));
+				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap("Birth_date"));
 		
 		currentConfigHolder = configHoldersList.get(3);
 		assertEquals("conf2_albums",
 				currentConfigHolder.getUid());
 		assertEquals("allmusic",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap(DomainHolderKeys.SITE_KEY));
+				currentConfigHolder.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.SITE_KEY));
 		assertEquals("nome_bucket_3",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap(DomainHolderKeys.BUCKET_S3_KEY));
+				currentConfigHolder.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.BUCKET_S3_KEY));
 		assertEquals("albums",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap(DomainHolderKeys.DOMAIN_ID_KEY));
+				currentConfigHolder.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.DOMAIN_ID_KEY));
 		assertEquals("http://www.allmusic.com/album/mw000236364",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap(DomainHolderKeys.FIRST_PAGE_KEY));
+				currentConfigHolder.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.FIRST_PAGE_KEY));
 		assertEquals("output2",
 				currentConfigHolder.getConfigurationValue("output_folder"));
 		assertEquals("Random#Greedy#Lucky",
@@ -114,21 +114,21 @@ public class ConfiguratorParserTest {
 		assertEquals("ALFRED",
 				currentConfigHolder.getConfigurationValue("algorithm"));
 		assertEquals("//*[@class='release-date']/text()",
-				currentConfigHolder.getAssociatedDomain().getConfigurationValue("Release date"));
+				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap("Release date"));
 		assertEquals("//*[@class='genres']/UL/LI[1]/A/text()",
-				currentConfigHolder.getAssociatedDomain().getConfigurationValue("Genres"));
+				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap("Genres"));
 		
 		currentConfigHolder = configHoldersList.get(6);
 		assertEquals("conf3_movies",
 				currentConfigHolder.getUid());
 		assertEquals("imdb",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap(DomainHolderKeys.SITE_KEY));
+				currentConfigHolder.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.SITE_KEY));
 		assertEquals("nome_bucket_1",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap(DomainHolderKeys.BUCKET_S3_KEY));
+				currentConfigHolder.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.BUCKET_S3_KEY));
 		assertEquals("movies",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap(DomainHolderKeys.DOMAIN_ID_KEY));
+				currentConfigHolder.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.DOMAIN_ID_KEY));
 		assertEquals("http://www.imdb.com/sections/dvd/?ref_=nb_mv_8_dvd",
-				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap(DomainHolderKeys.FIRST_PAGE_KEY));
+				currentConfigHolder.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.FIRST_PAGE_KEY));
 		assertEquals("output3",
 				currentConfigHolder.getConfigurationValue("output_folder"));
 		assertEquals("Simple#Srm",
@@ -142,9 +142,9 @@ public class ConfiguratorParserTest {
 		assertEquals("ALF#ALFRED",
 				currentConfigHolder.getConfigurationValue("algorithm"));
 		assertEquals("//*[@itemprop='ratingValue']/text()",
-				currentConfigHolder.getAssociatedDomain().getConfigurationValue("Rating"));
+				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap("Rating"));
 		assertEquals("//*[@itemprop='reviewCount']/text()",
-				currentConfigHolder.getAssociatedDomain().getConfigurationValue("number_of_Reviews"));
+				currentConfigHolder.getAssociatedDomain().getGoldenXPathMap("number_of_Reviews"));
 		
 	}
 
