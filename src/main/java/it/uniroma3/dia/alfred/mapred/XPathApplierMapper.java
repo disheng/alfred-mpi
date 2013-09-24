@@ -32,8 +32,7 @@ extends Mapper<S3ObjectSummaryWritable,S3ObjectWritable,Text,MapWritable>{
 	public enum Counters { PAGE, RULE_NULL };
 
 	@Override
-	protected void setup(Context context)
-			throws InterruptedException {
+	protected void setup(Context context) {
 
 		//Carico le regole dalla DistributedCache
 		Path[] cacheFiles = new Path[0];
