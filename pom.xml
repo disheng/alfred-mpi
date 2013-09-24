@@ -98,7 +98,7 @@
 			                    <exclude>META-INF/*.RSA</exclude>
 			                  </excludes>
 			                </filter>		                
-			              </filters>
+			              </filters>			              
 			                   <transformers>
 				                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 				                  <mainClass>it.uniroma3.dia.alfred.mapred.XPathApplierDriver</mainClass>
