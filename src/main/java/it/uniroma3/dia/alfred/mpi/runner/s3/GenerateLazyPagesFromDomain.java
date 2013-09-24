@@ -5,6 +5,7 @@ import it.uniroma3.dia.alfred.mpi.model.constants.DomainHolderKeys;
 import it.uniroma3.dia.datasource.IncrementalIdRetriever;
 import it.uniroma3.dia.datasource.s3.S3Uploader;
 
+import java.util.Collections;
 import java.util.List;
 
 import model.Page;
@@ -21,8 +22,12 @@ public class GenerateLazyPagesFromDomain {
 		List<Page> firstPage = convertUriToPage(Lists.newArrayList(firstPageKey), bucketValue);
 		return firstPage.get(0);
 	}
-
+	
 	public static List<Page> getPages(DomainHolder domainConf) {
+		return getPages(domainConf, Integer.MIN_VALUE);
+	}
+
+	public static List<Page> getPages(DomainHolder domainConf, int size) {
 		List<String> uriToRetrieve = Lists.newArrayList();
 		
 		IncrementalIdRetriever iidFake = new IncrementalIdRetriever();
@@ -59,6 +64,12 @@ public class GenerateLazyPagesFromDomain {
 		}
 		
 		// System.out.println(uriToRetrieve);
+		Collections.shuffle(uriToRetrieve);
+		if (size != Integer.MIN_VALUE) {
+			if (size <= uriToRetrieve.size() ) {
+				uriToRetrieve = uriToRetrieve.subList(0, size);
+			}
+		}
 
 		return convertUriToPage(uriToRetrieve, domainConf.getConfigurationValue(DomainHolderKeys.BUCKET_S3_KEY));
 	}

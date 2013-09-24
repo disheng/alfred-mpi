@@ -1,6 +1,7 @@
 package it.uniroma3.dia.alfred.mpi.runner;
 
 import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
+import it.uniroma3.dia.alfred.mpi.model.constants.ConfigHolderKeys;
 import it.uniroma3.dia.alfred.mpi.model.constants.DomainHolderKeys;
 import it.uniroma3.dia.alfred.mpi.runner.s3.GenerateLazyPagesFromDomain;
 
@@ -36,13 +37,18 @@ public class SlaveMPIThread_Attribute implements Callable<Boolean> {
 	public Boolean call() throws Exception {
         List<Page> allPages;
         Page goldenPage;
-        // Here we run alf on a single attribute of a domain with the given configuration
+        int trainingSet;
+        int testSet;
         
+        
+        // Here we run alf on a single attribute of a domain with the given configuration
 		this.output.open( this.getOutputName() );
+		trainingSet = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.TRAINING_SIZE_KEY) );
+		testSet = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.TESTING_SIZE_KEY) );
 
-		allPages = GenerateLazyPagesFromDomain.getPages(this.myCfg.getAssociatedDomain());
+		allPages = GenerateLazyPagesFromDomain.getPages(this.myCfg.getAssociatedDomain(), trainingSet + testSet);
 		goldenPage = GenerateLazyPagesFromDomain.getGoldenPage(this.myCfg.getAssociatedDomain());
-		// TODO: ?? the golden should be in all already
+		// Add also golden
 		allPages.add(goldenPage);
 		
 		Rule rule = new XPathRule(this.myCfg.getAssociatedDomain().getGoldenXPath(this.attribute));
