@@ -2,7 +2,6 @@ package it.uniroma3.dia.alfred.mpi.runner;
 
 import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
 import it.uniroma3.dia.alfred.mpi.model.constants.ConfigHolderKeys;
-import it.uniroma3.dia.alfred.mpi.model.constants.ConfigHolderKeys.WORKER_SIMULATION;
 import it.uniroma3.dia.alfred.mpi.model.constants.DomainHolderKeys;
 import it.uniroma3.dia.alfred.mpi.runner.data.ResultHolder;
 import it.uniroma3.dia.alfred.mpi.runner.s3.GenerateLazyPagesFromDomain;
@@ -10,15 +9,13 @@ import it.uniroma3.dia.alfred.xpath.XPathHandler;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.Callable;
-
-import com.google.common.collect.Maps;
-
-import rules.xpath.XPathRule;
 
 import model.Page;
 import model.Rule;
+import rules.xpath.XPathRule;
+
+import com.google.common.collect.Maps;
 
 import experiment.OutputManager;
 import experiment.runner.ExperimentCrowdManagerRunner;
