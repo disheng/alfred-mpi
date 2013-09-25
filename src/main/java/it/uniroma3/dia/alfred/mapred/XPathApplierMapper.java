@@ -3,6 +3,7 @@ package it.uniroma3.dia.alfred.mapred;
 import it.uniroma3.dia.alfred.mpi.model.XPathHolder;
 import it.uniroma3.dia.alfred.mpi.model.serializer.XPathHolderSerializable;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +24,7 @@ import rules.xpath.XPathRule;
 
 import com.atlantbh.hadoop.s3.io.S3ObjectSummaryWritable;
 import com.atlantbh.hadoop.s3.io.S3ObjectWritable;
+import com.google.common.collect.Lists;
 
 public class XPathApplierMapper 
 extends Mapper<S3ObjectSummaryWritable,S3ObjectWritable,Text,MapWritable>{
@@ -44,7 +46,21 @@ extends Mapper<S3ObjectSummaryWritable,S3ObjectWritable,Text,MapWritable>{
 		}
 
 		String cacheFile = cacheFiles[0].toString();
-		loadRules(cacheFile);
+//		System.err.println("===================================");
+//		System.err.println("cacheFile: "+ cacheFile);
+//		System.err.println(new File(cacheFile+"/xpathHolderTest.json").exists());
+//		System.err.println("===================================");
+		
+//		System.err.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+//		for (Path p : Lists.newArrayList(cacheFiles))
+//			System.err.println(p.toString());
+//		System.err.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+		
+		System.err.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+		System.err.println(cacheFile + "/" + context.getConfiguration().get(XPathApplierDriver.S3_XPATHRULES_FILENAME));
+		System.err.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+		
+		loadRules(cacheFile + "/" + context.getConfiguration().get(XPathApplierDriver.S3_XPATHRULES_FILENAME));
 		this.contaPagine = 0;		
 	}
 
@@ -59,7 +75,7 @@ extends Mapper<S3ObjectSummaryWritable,S3ObjectWritable,Text,MapWritable>{
 		this.rules = new MaterializedRuleSet();
 		for (String attribute : holder.getAttributesList()){
 			for (String rule : holder.getXpathsFromAttribute(attribute))
-				this.rules.addRule(new XPathRule(rule));			
+				this.rules.addRule(new XPathRule(rule));
 		}
 	}
 
@@ -67,9 +83,18 @@ extends Mapper<S3ObjectSummaryWritable,S3ObjectWritable,Text,MapWritable>{
 	public void map(S3ObjectSummaryWritable key, S3ObjectWritable value, Context context) throws IOException, InterruptedException {
 
 		Map<Rule, String> result = new HashMap<Rule, String>();
+ 
+		String pathPage = value.getKey();
+		String pageContent = IOUtils.toString(value.getObjectContent());
+		System.err.println("===================================");
+		//System.err.println("pagecontent: "+ pageContent);
+		System.err.println("value: "+ pathPage);
+		System.err.println("===================================");
+		
+		Page p = new Page(pageContent, pathPage);
 
-		Page p = new Page(IOUtils.toString(value.getObjectContent(), "UTF-8"),value.getKey());
 
+		
 		for (Rule rule : this.rules.getAllRules()) {
 			String estratto = rule.applyOn(p).getTextContent();
 			result.put(rule, estratto);
@@ -91,7 +116,7 @@ extends Mapper<S3ObjectSummaryWritable,S3ObjectWritable,Text,MapWritable>{
 		}
 
 		//Output: (path_pagina, mappa dei ris. delle regole)
-		context.write(new Text(p.getPath()), mappa);
+		context.write(new Text(pathPage), mappa);
 		this.contaPagine++;
 	}
 }

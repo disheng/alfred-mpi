@@ -20,7 +20,8 @@ public class XPathApplierDriver extends Configured implements Tool {
 
 	static String S3_BUCKET_NAME = "s3.bucket.name"; //il nome del bucket S3
 	static String S3_KEY_PREFIX = "s3.key.prefix"; //per filtrare i file del bucket si può impostare un prefisso
-
+	static String S3_XPATHRULES_FILENAME = "s3.xpathrules.filename";
+	
 	/**
 	 * Number of files to get from S3 in single request. Default value is 100
 	 */
@@ -43,25 +44,29 @@ public class XPathApplierDriver extends Configured implements Tool {
 		long start = System.currentTimeMillis();
 		
 		/* ARGS CHECK */
-		if (args.length < 4 && !(args.length >= 6)) {
-			System.err.println("Usage "+NAME+" <pageBucketName> <xPathRulesPathS3>" +
-					" <outputPathS3> <numberOfKeys> <optionalKeyPrefix> \n");
+		if (args.length < 6 && !(args.length >= 8)) {
+			System.err.println("Usage "+NAME+" <pageBucketName> <xPathRulesPathBucketS3> <xPathRulesFileNameS3> " +
+					" <outputPathBucketS3> <outputFolderS3> <numberOfKeys> <optionalKeyPrefix> \n");
 			ToolRunner.printGenericCommandUsage(System.err);
 			return -1;
 		}
 
-		String nomeBucketPagine = args[0];
-		//laciato così per il momento
-		String inputPath = "s3n://"+nomeBucketPagine;
-		String inputRulesPathS3 = args[1];
-		String outputPathS3 = args[2];
+		String inputPath = "s3n://"+ args[0];
+		String inputRulesPathS3 = "s3n://"+args[1]+"/";
+		String outputPathS3 = "s3n://"+args[3]+"/"+args[4];
+		
+		System.err.println("inputPath: "+inputPath);
+		System.err.println("inputRulesPathS3: "+inputRulesPathS3);
+		System.err.println("outputPathS3: "+outputPathS3);
 
-		int numeroChiavi = Integer.parseInt(args[3]);
+		int numeroChiavi = Integer.parseInt(args[5]);
+		
+		System.err.println("numeroChiavi: "+numeroChiavi);
 
 		String prefisso = "";
 		
-		if(args[4] != null){				
-			prefisso = args[4];
+		if((args.length >= 7) && (args[6] != null)){				
+			prefisso = args[6];
 		}
 
 		Configuration conf = new Configuration();
@@ -72,7 +77,8 @@ public class XPathApplierDriver extends Configured implements Tool {
 		conf.addResource("mapred-default.xml");
 		conf.addResource("mapred-site.xml");
 
-		conf.set(S3_BUCKET_NAME, nomeBucketPagine);
+		conf.set(S3_XPATHRULES_FILENAME, args[2]);
+		conf.set(S3_BUCKET_NAME, args[0]);
 		conf.set(S3_KEY_PREFIX, prefisso);
 		conf.setInt(S3_NUM_OF_KEYS_PER_MAPPER, numeroChiavi);
 
