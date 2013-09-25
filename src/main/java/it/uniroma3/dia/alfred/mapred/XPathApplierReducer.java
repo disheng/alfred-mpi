@@ -26,7 +26,8 @@ extends Reducer<Text,MapWritable,Text,MapWritable> {
 				Text valore = (Text)mappa.get(rule);
 				result.put(new Text(regola.toString()), new Text(valore.toString()));
 			}
-		}	
+		}
+		
 		context.write(key,result);       
 	}
 }
