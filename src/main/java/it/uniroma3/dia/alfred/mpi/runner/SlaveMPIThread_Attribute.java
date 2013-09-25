@@ -19,6 +19,8 @@ import model.Page;
 import model.Rule;
 
 import experiment.OutputManager;
+import experiment.runner.ExperimentCrowdManagerRunner;
+import experiment.runner.ExperimentCrowdManagerRunner.WORKER_FUNCTION;
 
 public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 	
@@ -59,12 +61,24 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 		}
 		int occ = 1; // this.experiments.getOccurrence(domain, attribute);
 		
-		// TODO: what to call here?
-		// ExperimentCrowdManagerRunner e = new ExperimentCrowdManagerRunner(allPages, goldenPage,url2Value, occ, null, # max_expressiveness, WORKER_FUNCTION.EXPONENTIAL, 0.20);
-		// String s = e.call();
-		// è orribile il call ... ma per ora mi sembra il male minore :)
+		// Call alfred crowd (disheng says)
+		int maxExpressiveness = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.MAX_EXPRESSIVENESS_KEY) );
+		String experimentResult = null;
+		try {
+			ExperimentCrowdManagerRunner e = new ExperimentCrowdManagerRunner(allPages, goldenPage,url2Value, occ, null, maxExpressiveness, WORKER_FUNCTION.EXPONENTIAL, 0.20);
+			experimentResult = e.call();
+		} catch (Exception e) {
+			experimentResult = null;
+			e.printStackTrace();
+		}
 		
-		return new ResultHolder(new Random(System.nanoTime()).nextBoolean(), "");
+		if (experimentResult != null) {
+			// Save it?
+			this.output.addLine(getOutputName(), experimentResult);	
+		}
+
+		
+		return new ResultHolder(((experimentResult != null) && (experimentResult.length() > 0)), experimentResult);
 	}
 	
 	private String getOutputName() {
