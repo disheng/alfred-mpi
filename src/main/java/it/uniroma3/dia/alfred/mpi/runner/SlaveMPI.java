@@ -4,6 +4,7 @@ import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
 import it.uniroma3.dia.alfred.mpi.model.serializer.ConfigHolderSerializable;
 import it.uniroma3.dia.alfred.mpi.runner.MPIConstants.AbortReason;
 import it.uniroma3.dia.alfred.mpi.runner.MPIConstants.TagValue;
+import it.uniroma3.dia.alfred.mpi.runner.data.ResultHolder;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -42,7 +43,7 @@ class SlaveMPI {
 			RunAlfred.abort(AbortReason.WORK_SIZE_MISMATCH);
 		}
 		
-		List<Boolean> execResults = runThreads(MPI.COMM_WORLD.Rank(), confPerWorker);
+		List<ResultHolder> execResults = runThreads(MPI.COMM_WORLD.Rank(), confPerWorker);
 		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: ConfResults: " + execResults);
 		
 		// Synchro after thread execution
@@ -107,23 +108,23 @@ class SlaveMPI {
 		return confPerWorker;
 	}
 	
-	private static void sendResults(List<Boolean> execResults) throws MPIException {
+	private static void sendResults(List<ResultHolder> execResults) throws MPIException {
 		int[] messageSend = new int[1];
 		messageSend[0] = execResults.size();
 		
 		byte[] bDataSend = new byte[execResults.size()];
 		for(int i = 0; i < bDataSend.length; ++i) {
-			bDataSend[i] = (byte) (execResults.get(i) ? 1 : 0);
+			bDataSend[i] = (byte) (execResults.get(i).getBooleanResult() ? 1 : 0);
 		}
 		
 		MPI.COMM_WORLD.Send(messageSend, 0, 1, MPI.INT, MPIConstants.MASTER, TagValue.TAG_CONF_RESULTS_SIZE.getValue());
 		MPI.COMM_WORLD.Send(bDataSend, 0, bDataSend.length, MPI.BYTE, MPIConstants.MASTER, TagValue.TAG_CONF_RESULTS.getValue());
 	}
 	
-	private static List<Boolean> runThreads(int rank, List<ConfigHolder> confPerWorker) {
+	private static List<ResultHolder> runThreads(int rank, List<ConfigHolder> confPerWorker) {
 		// Execute configurations in parallel if necessary
         ExecutorService executor = Executors.newFixedThreadPool(Math.max(Runtime.getRuntime().availableProcessors() - 1, 1));
-        List<Future<Boolean>> threadResults = Lists.newArrayList();
+        List<Future<ResultHolder>> threadResults = Lists.newArrayList();
         
         List<String> attributeList;
         
@@ -137,8 +138,8 @@ class SlaveMPI {
         executor.shutdown();
         while (!executor.isTerminated()) {}	
         
-        List<Boolean> bResult = Lists.newArrayList();
-        for(Future<Boolean> bCurr: threadResults) {
+        List<ResultHolder> bResult = Lists.newArrayList();
+        for(Future<ResultHolder> bCurr: threadResults) {
         	try {
 				bResult.add(bCurr.get());
 			} catch (InterruptedException e) {

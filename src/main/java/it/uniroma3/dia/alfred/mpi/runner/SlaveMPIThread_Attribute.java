@@ -3,6 +3,7 @@ package it.uniroma3.dia.alfred.mpi.runner;
 import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
 import it.uniroma3.dia.alfred.mpi.model.constants.ConfigHolderKeys;
 import it.uniroma3.dia.alfred.mpi.model.constants.DomainHolderKeys;
+import it.uniroma3.dia.alfred.mpi.runner.data.ResultHolder;
 import it.uniroma3.dia.alfred.mpi.runner.s3.GenerateLazyPagesFromDomain;
 
 import java.util.List;
@@ -19,7 +20,7 @@ import model.Rule;
 
 import experiment.OutputManager;
 
-public class SlaveMPIThread_Attribute implements Callable<Boolean> {
+public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 	
 	private ConfigHolder myCfg;
 	private String attribute;
@@ -34,7 +35,7 @@ public class SlaveMPIThread_Attribute implements Callable<Boolean> {
 	}
 
 	@Override
-	public Boolean call() throws Exception {
+	public ResultHolder call() throws Exception {
         List<Page> allPages;
         Page goldenPage;
         int trainingSet;
@@ -63,7 +64,7 @@ public class SlaveMPIThread_Attribute implements Callable<Boolean> {
 		// String s = e.call();
 		// è orribile il call ... ma per ora mi sembra il male minore :)
 		
-		return new Random(System.nanoTime()).nextBoolean();
+		return new ResultHolder(new Random(System.nanoTime()).nextBoolean(), "");
 	}
 	
 	private String getOutputName() {
