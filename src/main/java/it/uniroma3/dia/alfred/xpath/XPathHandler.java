@@ -3,17 +3,22 @@ package it.uniroma3.dia.alfred.xpath;
 import rules.xpath.XPathRule;
 import model.ExtractedValue;
 import model.Page;
+import model.Rule;
 
 public class XPathHandler {
+	private XPathHandler() {}
 	
-	private static XPathHandler instance;	
-	
-	public static XPathHandler getInstance(){
-		if (instance==null){
-			instance = new XPathHandler();		
-		}
-		return instance;		
-	}	
+	/**
+	 * 
+	 * Metodo che esegue una query su una pagina
+	 * 
+	 * @param page - Rappresentazione di una pagina
+	 * @param xPathQuery - Una Rule query
+	 * @return ExtractedValue - oggetto risultato della query
+	 */
+	public static ExtractedValue executeQuery(Page page, Rule xPathQuery) {
+		return xPathQuery.applyOn(page);		
+	}
 	
 	/**
 	 * 
@@ -23,9 +28,32 @@ public class XPathHandler {
 	 * @param xPathQuery - Una Query XPath
 	 * @return ExtractedValue - oggetto risultato della query
 	 */
-	public ExtractedValue executeQuery(Page page, String xPathQuery){		
-		XPathRule rule = new XPathRule(xPathQuery);
-		return rule.applyOn(page);		
+	public static ExtractedValue executeQuery(Page page, String xPathQuery) {
+		return executeQuery(page, new XPathRule(xPathQuery));		
+	}
+	
+	/**
+	 * 
+	 * Metodo che esegue una query su una pagina e ritorna il risultato come stringa
+	 * 
+	 * @param page - Rappresentazione di una pagina
+	 * @param xPathQuery - Una Rule query
+	 * @return String - oggetto risultato della query
+	 */
+	public static String executeQueryAsText(Page page, Rule xPathQuery) {
+		return executeQuery(page, xPathQuery).getTextContent();		
+	}
+	
+	/**
+	 * 
+	 * Metodo che esegue una query su una pagina e ritorna il risultato come stringa
+	 * 
+	 * @param page - Rappresentazione di una pagina
+	 * @param xPathQuery - Una Query XPath
+	 * @return String - oggetto risultato della query
+	 */
+	public static String executeQueryAsText(Page page, String xPathQuery) {
+		return executeQuery(page, xPathQuery).getTextContent();		
 	}
 	
 	/**
@@ -35,23 +63,9 @@ public class XPathHandler {
 	 * @param page - Rappresentazione di una pagina
 	 * @param xPathQuery - Una Query XPath
 	 */
-	public void print_executeQuery(Page page, String xPathQuery){		
-		XPathRule rule = new XPathRule(xPathQuery);
-		ExtractedValue value = rule.applyOn(page);	
+	public static void print_executeQuery(Page page, String xPathQuery) {
+		ExtractedValue value = executeQuery(page, xPathQuery);	
 		System.out.println(value.toString());	
 		System.out.println("Number of nodes values : "+value.getNumberOfNodesValues());
-	}	
-	
-	/**
-	 * 
-	 * Costruisce un oggetto Page, rappresentazione di una pagina,
-	 * a partire dalla sua rappresentazione in stringa.
-	 * 
-	 * @param content - contenuto della pagina
-	 * @return Page - oggetto che rappresenta la pagina 
-	 */
-	public Page createPage(String content){
-		Page page = new Page(content);				
-		return page;
 	}
 }

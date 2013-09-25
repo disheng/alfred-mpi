@@ -2,9 +2,11 @@ package it.uniroma3.dia.alfred.mpi.runner;
 
 import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
 import it.uniroma3.dia.alfred.mpi.model.constants.ConfigHolderKeys;
+import it.uniroma3.dia.alfred.mpi.model.constants.ConfigHolderKeys.WORKER_SIMULATION;
 import it.uniroma3.dia.alfred.mpi.model.constants.DomainHolderKeys;
 import it.uniroma3.dia.alfred.mpi.runner.data.ResultHolder;
 import it.uniroma3.dia.alfred.mpi.runner.s3.GenerateLazyPagesFromDomain;
+import it.uniroma3.dia.alfred.xpath.XPathHandler;
 
 import java.util.List;
 import java.util.Map;
@@ -57,15 +59,19 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 		Rule rule = new XPathRule(this.myCfg.getAssociatedDomain().getGoldenXPath(this.attribute));
 		Map<String, String> url2Value = Maps.newHashMap();
 		for (Page page : allPages) {
-			url2Value.put(page.getTitle(), rule.applyOn(page).getTextContent());
+			url2Value.put(page.getTitle(), XPathHandler.executeQueryAsText(page, rule));
 		}
 		int occ = 1; // this.experiments.getOccurrence(domain, attribute);
 		
 		// Call alfred crowd (disheng says)
 		int maxExpressiveness = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.MAX_EXPRESSIVENESS_KEY) );
+		String workerSimulation = this.myCfg.getConfigurationValue(ConfigHolderKeys.WORKER_SIMULATION_KEY);
+		
 		String experimentResult = null;
 		try {
-			ExperimentCrowdManagerRunner e = new ExperimentCrowdManagerRunner(allPages, goldenPage,url2Value, occ, null, maxExpressiveness, WORKER_FUNCTION.EXPONENTIAL, 0.20);
+			ExperimentCrowdManagerRunner e = 
+					new ExperimentCrowdManagerRunner(allPages, goldenPage, url2Value, occ, 
+							null, maxExpressiveness, this.getWorkerFunction(workerSimulation), 0.20);
 			experimentResult = e.call();
 		} catch (Exception e) {
 			experimentResult = null;
@@ -76,7 +82,6 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 			// Save it?
 			this.output.addLine(getOutputName(), experimentResult);	
 		}
-
 		
 		return new ResultHolder(((experimentResult != null) && (experimentResult.length() > 0)), experimentResult);
 	}
@@ -86,41 +91,16 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 			this.myCfg.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.DOMAIN_ID_KEY) +
 			"-" + this.processRank + "-" + this.attribute;
 	}
-}
-
-/*
-/*
-List<Page> all;
-this.output.open(CROWD_MANAGER_EXPERIMENTS_OUTPUT);
-
-for (DOMAINS domain : this.experiments.getDomains()) {
-
-	ExperimentKey main = new ExperimentKeyMongo(domain.toString(),
-			this.experiments.getWebsite(domain), null);
-
-	firstPage = this.pageLoader.getOnePage(this.experiments.getFirstPage(domain), main);
-
-	all = this.pageLoader.getDomainPages(main, PAGES_NUMBER);
-	all.add(firstPage);
-
-	for (String attribute : this.experiments.getAttributes(domain)) {
-		main = main.buildNewKey(attribute);
-
-		Rule rule = new XPathRule(this.experiments.getGoldenXpath(domain, attribute));
-		Map<String, String> url2Value = new HashMap<>();
-		for (Page page : all) {
-			url2Value.put(page.getTitle(), rule.applyOn(page).getTextContent());
+	
+	private WORKER_FUNCTION getWorkerFunction(String wf) {
+		WORKER_FUNCTION wfDefault = WORKER_FUNCTION.EXPONENTIAL;
+		
+		if (wf.equalsIgnoreCase(ConfigHolderKeys.WORKER_SIMULATION.REAL.getReason() )) {
+			wfDefault = WORKER_FUNCTION.REAL;
+		} else if (wf.equalsIgnoreCase(ConfigHolderKeys.WORKER_SIMULATION.EXPONENTIAL.getReason() )) {
+			wfDefault = WORKER_FUNCTION.EXPONENTIAL;
 		}
-		int occ = this.experiments.getOccurrence(domain, attribute);
-
-		// submit task
-		ExperimentCrowdManagerRunner e = new ExperimentCrowdManagerRunner(all, firstPage,
-				url2Value, occ, main, 5, WORKER_FUNCTION.EXPONENTIAL, 0.20);
-//		String s = e.call();
-//		this.output.addLine(CROWD_MANAGER_EXPERIMENTS_OUTPUT, s);
-//		this.output.close(CROWD_MANAGER_EXPERIMENTS_OUTPUT);
-		comp.submit(e);
-//		Thread.sleep(10000000);
+		
+		return wfDefault;
 	}
 }
-*/

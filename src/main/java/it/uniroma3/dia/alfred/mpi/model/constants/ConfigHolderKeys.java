@@ -27,4 +27,17 @@ public class ConfigHolderKeys {
 	public final static String WORKER_SIMULATION_KEY = "worker_simulation";
 	public final static String ALGORITHM_KEY = "algorithm";
 
+	public enum WORKER_SIMULATION {
+		REAL("Real"),
+		EXPONENTIAL("Exponential");
+		
+		private String reason;
+		WORKER_SIMULATION(String reason) {
+			this.reason = reason;
+		}
+		
+		public String getReason() {
+			return this.reason;
+		}
+	}
 }
