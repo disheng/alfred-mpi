@@ -3,7 +3,6 @@ package it.uniroma3.dia.alfred.mapred;
 import it.uniroma3.dia.alfred.mpi.model.XPathHolder;
 import it.uniroma3.dia.alfred.mpi.model.serializer.XPathHolderSerializable;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +23,6 @@ import rules.xpath.XPathRule;
 
 import com.atlantbh.hadoop.s3.io.S3ObjectSummaryWritable;
 import com.atlantbh.hadoop.s3.io.S3ObjectWritable;
-import com.google.common.collect.Lists;
 
 public class XPathApplierMapper 
 extends Mapper<S3ObjectSummaryWritable,S3ObjectWritable,Text,MapWritable>{
