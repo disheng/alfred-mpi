@@ -45,10 +45,10 @@ public class XPathApplierDriver extends Configured implements Tool {
 		long start = System.currentTimeMillis();
 		
 		/* ARGS CHECK */
-		if (args.length < 6 && !(args.length >= 8)) {
+		if (args.length < 6 && !(args.length >= 9)) {
 			System.err.println("Usage "+NAME+" <pageBucketName> <xPathRulesPathBucketS3> <xPathRulesFileNameS3> " +
 					" <outputPathBucketS3> <outputFolderS3> <numberOfKeys>" +
-					" <optionalReduceTasks> <optionalKeyPrefix>\n");
+					" <optionalReduceTasks> <useTextFormat> <optionalKeyPrefix>\n");
 			ToolRunner.printGenericCommandUsage(System.err);
 			return -1;
 		}
@@ -56,6 +56,7 @@ public class XPathApplierDriver extends Configured implements Tool {
 		String inputPath = "s3n://"+ args[0];
 		String inputRulesPathS3 = "s3n://"+args[1]+"/";
 		String outputPathS3 = "s3n://"+args[3]+"/"+args[4];
+		boolean useTextReducer = false;
 		
 		System.err.println("inputPath: "+inputPath);
 		System.err.println("inputRulesPathS3: "+inputRulesPathS3);
@@ -70,9 +71,14 @@ public class XPathApplierDriver extends Configured implements Tool {
 		
 		if((args.length >= 7) && (args[6] != null)){				
 			numReduceTasks = Integer.parseInt(args[6]);
-			if((args.length >= 8) && (args[7] != null)){
-				prefisso = args[7];
-			}
+		}
+		
+		if((args.length >= 8) && (args[7] != null)){				
+			useTextReducer = Boolean.valueOf(args[7]);
+		}
+		
+		if((args.length >= 9) && (args[8] != null)){
+			prefisso = args[8];
 		}
 
 		Configuration conf = new Configuration();
@@ -97,10 +103,16 @@ public class XPathApplierDriver extends Configured implements Tool {
 		job.setMapOutputValueClass(MapWritable.class);
 
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(MapWritable.class);	
+		
 
 		job.setMapperClass(XPathApplierMapper.class);
-		job.setReducerClass(XPathApplierReducer.class);
+		if (useTextReducer) {
+			job.setReducerClass(XPathApplierTextReducer.class);
+			job.setOutputValueClass(Text.class);	
+		} else {
+			job.setReducerClass(XPathApplierReducer.class);
+			job.setOutputValueClass(MapWritable.class);	
+		}
 
 		job.setInputFormatClass(S3ObjectInputFormat.class);
 		
