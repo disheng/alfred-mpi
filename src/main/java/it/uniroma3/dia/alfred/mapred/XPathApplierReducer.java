@@ -18,15 +18,24 @@ extends Reducer<Text,MapWritable,Text,MapWritable> {
 	}
 
 	@Override
-	public void reduce(Text key, Iterable<MapWritable> mappe, Context context) throws IOException, InterruptedException {
+	public void reduce(Text key, Iterable<MapWritable> listOfMaps, Context context) throws IOException, InterruptedException {
 
-		for (MapWritable mappa : mappe) {	    	
-			for (Writable rule : mappa.keySet()) {
-				Text regola = (Text)rule;
-				Text valore = (Text)mappa.get(rule);
-				result.put(new Text(regola.toString()), new Text(valore.toString()));
+		for (MapWritable partialResultMap : listOfMaps) {
+			for (Writable attributeText : partialResultMap.keySet()) {
+				MapWritable partialInsideMap = (MapWritable) partialResultMap.get(attributeText);
+				MapWritable partialOutputMap = new MapWritable();
+				
+				for (Writable rule : partialInsideMap.keySet()) {
+					Text regola = (Text) rule;
+					Text valore = (Text) partialInsideMap.get(rule);
+					
+					partialOutputMap.put(new Text(regola.toString()), new Text(valore.toString()));
+				}
+				
+				result.put((Text)attributeText, partialOutputMap);
 			}
 		}	
+		
 		context.write(key,result);       
 	}
 }

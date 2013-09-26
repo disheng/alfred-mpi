@@ -4,7 +4,6 @@ import it.uniroma3.dia.alfred.mpi.model.XPathHolder;
 import it.uniroma3.dia.alfred.mpi.model.serializer.XPathHolderSerializable;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import model.MaterializedRuleSet;
@@ -23,11 +22,12 @@ import rules.xpath.XPathRule;
 
 import com.atlantbh.hadoop.s3.io.S3ObjectSummaryWritable;
 import com.atlantbh.hadoop.s3.io.S3ObjectWritable;
+import com.google.common.collect.Maps;
 
 public class XPathApplierMapper 
 extends Mapper<S3ObjectSummaryWritable,S3ObjectWritable,Text,MapWritable>{
 
-	private MaterializedRuleSet rules;	
+	private Map<String, MaterializedRuleSet> rules;	
 	private int contaPagine;		
 	public enum Counters { PAGE, RULE_NULL };
 
@@ -57,45 +57,62 @@ extends Mapper<S3ObjectSummaryWritable,S3ObjectWritable,Text,MapWritable>{
 	public void loadRules(String cachePath) {
 		XPathHolder holder = XPathHolderSerializable.fromJsonFile(cachePath);
 
-		this.rules = new MaterializedRuleSet();
-		for (String attribute : holder.getAttributesList()){
-			for (String rule : holder.getXpathsFromAttribute(attribute))
-				this.rules.addRule(new XPathRule(rule));
+		this.rules = Maps.newHashMap();
+		for (String attribute : holder.getAttributesList()) {
+			MaterializedRuleSet mrToPut = new MaterializedRuleSet();
+			
+			for (String rule : holder.getXpathsFromAttribute(attribute)) {
+				mrToPut.addRule(new XPathRule(rule));
+			}
+
+			this.rules.put(attribute, mrToPut);
 		}
 	}
 
 	@Override
 	public void map(S3ObjectSummaryWritable key, S3ObjectWritable value, Context context) throws IOException, InterruptedException {
 
-		Map<Rule, String> result = new HashMap<Rule, String>();
+		Map<String, Map<Rule, String>> result = Maps.newHashMap();
  
 		String pathPage = value.getKey();
 		String pageContent = IOUtils.toString(value.getObjectContent());
 		
 		Page p = new Page(pageContent, pathPage);
 
-		for (Rule rule : this.rules.getAllRules()) {
-			String estratto = rule.applyOn(p).getTextContent();
-			result.put(rule, estratto);
+		for(String attribute: this.rules.keySet()) {
+			Map<Rule, String> tempResult = Maps.newHashMap();
+			
+			for (Rule rule : this.rules.get(attribute).getAllRules()) {
+				String estratto = rule.applyOn(p).getTextContent();
+				tempResult.put(rule, estratto);
 
-			if (estratto.equals("")) {
-				context.getCounter(Counters.RULE_NULL).increment(1);
+				if (estratto.equals("")) {
+					context.getCounter(Counters.RULE_NULL).increment(1);
+				}
 			}
+			
+			result.put(attribute, tempResult);
 		}
 
-		MapWritable mappa = new MapWritable();
+		MapWritable mappaRisultati = new MapWritable();
 
-		for (Rule regola : result.keySet()) {
-			String valore = result.get(regola);
-			if (valore != null) {
-				mappa.put(new Text(regola.toString()), new Text(valore));
-			} else {
-				mappa.put(new Text(regola.toString()), new Text(""));
+		for(String attribute: result.keySet()) {
+			MapWritable mappaInside = new MapWritable();
+			
+			for (Rule regola : result.get(attribute).keySet()) {
+				String valore = result.get(attribute).get(regola);
+				if (valore != null) {
+					mappaInside.put(new Text(regola.toString()), new Text(valore));
+				} else {
+					mappaInside.put(new Text(regola.toString()), new Text(""));
+				}
 			}
+			
+			mappaRisultati.put(new Text(attribute), mappaInside);
 		}
 
 		//Output: (path_pagina, mappa dei ris. delle regole)
-		context.write(new Text(pathPage), mappa);
+		context.write(new Text(pathPage), mappaRisultati);
 		this.contaPagine++;
 	}
 }
