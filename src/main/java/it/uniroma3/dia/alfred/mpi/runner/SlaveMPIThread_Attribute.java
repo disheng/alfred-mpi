@@ -15,7 +15,6 @@ import model.Page;
 import model.Rule;
 import rules.xpath.XPathRule;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 import experiment.OutputManager;
@@ -58,19 +57,21 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 		Rule rule = new XPathRule(this.myCfg.getAssociatedDomain().getGoldenXPath(this.attribute));
 		Map<String, String> url2Value = Maps.newHashMap();
 		
+		int maxExpressiveness = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.MAX_EXPRESSIVENESS_KEY) );
+		String workerSimulation = this.myCfg.getConfigurationValue(ConfigHolderKeys.WORKER_SIMULATION_KEY);
+		
 		System.out.println(getOutputName() + "] Filtering pages");
 		for (Page page : allPages) {
 			try {
 				url2Value.put(page.getTitle(), XPathHandler.executeQueryAsText(page, rule));
 			} catch(Exception e) {
-				System.out.println(getOutputName() + "] problem while fetching page " + page.getTitle());
+				System.out.println(getOutputName() + "] problem while fetching/parsing \" " + page.getTitle() + "\" - Ex: " + e.toString());
 			}
 		}
 		int occ = 1; // this.experiments.getOccurrence(domain, attribute);
 		
 		// Call alfred crowd (disheng says)
-		int maxExpressiveness = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.MAX_EXPRESSIVENESS_KEY) );
-		String workerSimulation = this.myCfg.getConfigurationValue(ConfigHolderKeys.WORKER_SIMULATION_KEY);
+
 		
 		String experimentResult = null;
 		try {

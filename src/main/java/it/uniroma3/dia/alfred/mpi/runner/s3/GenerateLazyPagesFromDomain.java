@@ -54,10 +54,12 @@ public class GenerateLazyPagesFromDomain {
 				uriToRetrieve.addAll( iidFake.getAllArtistsURL() );
 			}
 		} else {
+			System.out.println("Fetching list from S3 bucket " + bucketValue);
 			List<String> tempUris = null;
 			try {
 				tempUris = S3Uploader.getInstance().getObjectUrls(bucketValue);
 			} catch(Exception e) {
+				System.out.println("ERROR fetching list from S3 bucket " + bucketValue);
 				tempUris = null;
 			}
 			uriToRetrieve.addAll(tempUris);

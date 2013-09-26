@@ -84,7 +84,7 @@ public class ConfiguratorParserTest {
 				currentConfigHolder.getConfigurationValue("testing_dimension"));
 		assertEquals("ALF",
 				currentConfigHolder.getConfigurationValue("algorithm"));
-		assertEquals("//*[@itemprop='name']/text()#NO",
+		assertEquals("//*[@itemprop='name']/text()",
 				currentConfigHolder.getAssociatedDomain().getGoldenXPath("Name"));
 		assertEquals("//*[@itemprop='birthDate']/A[1]/text()",
 				currentConfigHolder.getAssociatedDomain().getGoldenXPath("Birth_date"));
