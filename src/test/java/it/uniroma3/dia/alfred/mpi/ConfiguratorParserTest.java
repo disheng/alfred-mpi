@@ -54,7 +54,7 @@ public class ConfiguratorParserTest {
 				currentConfigHolder.getConfigurationValue("concurrent_experiments"));
 		assertEquals("1000",
 				currentConfigHolder.getConfigurationValue("testing_dimension"));
-		assertEquals("ALF#ALFRED",
+		assertEquals("ALF",
 				currentConfigHolder.getConfigurationValue("algorithm"));
 		assertEquals("//*[@itemprop='name']/text()",
 				currentConfigHolder.getAssociatedDomain().getGoldenXPath("Title"));
@@ -82,7 +82,7 @@ public class ConfiguratorParserTest {
 				currentConfigHolder.getConfigurationValue("concurrent_experiments"));
 		assertEquals("1000",
 				currentConfigHolder.getConfigurationValue("testing_dimension"));
-		assertEquals("ALF#ALFRED",
+		assertEquals("ALF",
 				currentConfigHolder.getConfigurationValue("algorithm"));
 		assertEquals("//*[@itemprop='name']/text()#NO",
 				currentConfigHolder.getAssociatedDomain().getGoldenXPath("Name"));
@@ -102,7 +102,7 @@ public class ConfiguratorParserTest {
 				currentConfigHolder.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.FIRST_PAGE_KEY));
 		assertEquals("output2",
 				currentConfigHolder.getConfigurationValue("output_folder"));
-		assertEquals("Random#Greedy#Lucky",
+		assertEquals("Entropy",
 				currentConfigHolder.getConfigurationValue("algorithms_chooser"));
 		assertEquals("1000",
 				currentConfigHolder.getConfigurationValue("max_mq_number"));
@@ -130,7 +130,7 @@ public class ConfiguratorParserTest {
 				currentConfigHolder.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.FIRST_PAGE_KEY));
 		assertEquals("output3",
 				currentConfigHolder.getConfigurationValue("output_folder"));
-		assertEquals("Simple#Srm",
+		assertEquals("Srm",
 				currentConfigHolder.getConfigurationValue("algorithms_core"));
 		assertEquals("100",
 				currentConfigHolder.getConfigurationValue("max_mq_number"));
@@ -138,7 +138,7 @@ public class ConfiguratorParserTest {
 				currentConfigHolder.getConfigurationValue("lucky_threashold"));
 		assertEquals("2000",
 				currentConfigHolder.getConfigurationValue("testing_dimension"));
-		assertEquals("ALF#ALFRED",
+		assertEquals("ALFRED",
 				currentConfigHolder.getConfigurationValue("algorithm"));
 		assertEquals("//*[@itemprop='ratingValue']/text()",
 				currentConfigHolder.getAssociatedDomain().getGoldenXPath("Rating"));
