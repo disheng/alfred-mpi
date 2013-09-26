@@ -9,7 +9,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.CombineFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
-//import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
@@ -115,16 +115,24 @@ public class XPathApplierDriver extends Configured implements Tool {
 		}
 
 		job.setInputFormatClass(S3ObjectInputFormat.class);
+		CombineFileInputFormat.setInputPaths(job, inputPath);
 		
-		//File map<pagina, list<xpath,res>> su S3 
-		job.setOutputFormatClass(SequenceFileOutputFormat.class);
-		//job.setOutputFormatClass(TextOutputFormat.class);
+		//File map<pagina, list<xpath,res>> su S3
+		if (useTextReducer) {
+			job.setOutputFormatClass(TextOutputFormat.class);
+			TextOutputFormat.setOutputPath(job, new Path(outputPathS3));
+		} else {
+			job.setOutputFormatClass(SequenceFileOutputFormat.class);
+			SequenceFileOutputFormat.setOutputPath(job, new Path(outputPathS3));
+		}
+		
+		//
 
 		// Set the input path
-		CombineFileInputFormat.setInputPaths(job, inputPath);
+		
 		// Set the output path
-		SequenceFileOutputFormat.setOutputPath(job, new Path(outputPathS3));
-		//TextOutputFormat.setOutputPath(job, new Path(outputPathS3));
+		
+		//
 		
 		// Set the jar file to run
 		job.setJarByClass(XPathApplierDriver.class);
