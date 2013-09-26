@@ -14,8 +14,6 @@ public class RunAlfred {
 	private static int RANK_MASTER = 0;
 	
 	public static void run(String[] args, List<ConfigHolder> inputConfigs) throws MPIException {
-		MPI.Init(args);
-
 		int myrank = MPI.COMM_WORLD.Rank();
 		int size = MPI.COMM_WORLD.Size();
 		
@@ -27,8 +25,6 @@ public class RunAlfred {
 		} else {
 			SlaveMPI.run();
 		}
-	 
-		MPI.Finalize();
 	}
 	
 	static void abort(MPIConstants.AbortReason aReason) {

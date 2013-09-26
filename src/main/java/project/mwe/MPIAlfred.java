@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import mpi.MPI;
 import mpi.MPIException;
 
 import com.google.common.collect.Lists;
@@ -24,14 +25,23 @@ public class MPIAlfred {
 
 	
 	public static void main(String[] args) throws MPIException {
-		List<ConfigHolder> input = Lists.newArrayList();
+		MPI.Init(args);
 		
-		Random rndSeed = new Random(System.nanoTime());
-		for(int i = 0; i < CONFIG_MAX; ++i) {
-			input.add(generateNew( Math.max(CONFIG_VAL_MAX, rndSeed.nextInt(CONFIG_VAL_MAX)) ));
+		int myrank = MPI.COMM_WORLD.Rank();
+		List<ConfigHolder> input = null;
+				
+		if (myrank == 0) {
+			input = Lists.newArrayList();
+			
+			Random rndSeed = new Random(System.nanoTime());
+			for(int i = 0; i < CONFIG_MAX; ++i) {
+				input.add(generateNew( Math.max(CONFIG_VAL_MAX, rndSeed.nextInt(CONFIG_VAL_MAX)) ));
+			}
 		}
-		
+
 		RunAlfred.run(args, input);
+		
+		MPI.Finalize();
 	}
 	
 	private static ConfigHolder generateNew(int numberOfValues) {
