@@ -28,6 +28,7 @@ public class ConfiguratorParser {
 	// Delimiter used in the properties file
 	private final static String DELIMITER = "=";
 	private final static String SECOND_DELIMITER = ",";
+	private final static String COMMENT = "//";
 
 	/**
 	 * This map will have for each domain (represented by a String)
@@ -81,12 +82,17 @@ public class ConfiguratorParser {
 			while( (currentLine = reader.readLine()) != null) {
 				
 				// if the line is empty
-				if (currentLine.matches("\\s*")) {
+				if (currentLine.matches("^\\s*$")) {
+					continue;
+				}
+				
+				// if the line is a comment
+				if (currentLine.matches("^//.*")) {
 					continue;
 				}
 				
 				// if contains a new definition
-				if (currentLine.matches("\\[.*\\]")) {
+				if (currentLine.matches("^\\[.*\\]$")) {
 					currentConfigurationName = currentLine.substring(1, currentLine.length()-1);
 					continue;
 				}
