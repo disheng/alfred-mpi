@@ -52,7 +52,9 @@ public class ConfiguratorParser {
 	 */
 	public static List<ConfigHolder> readConfig(String filePathConfigurations, String filePathDomains) {
 	
-		readDomains(filePathDomains);
+		if (readDomains(filePathDomains) == false){
+			return null;
+		}
 		
 		BufferedReader reader = null;
 		
@@ -64,6 +66,7 @@ public class ConfiguratorParser {
 			} catch (FileNotFoundException e) {
 				System.err.println("Error in opening " + filePathConfigurations);
 				e.printStackTrace();
+				return null;
 			}
 		}
 		
@@ -131,6 +134,7 @@ public class ConfiguratorParser {
 		} catch (IOException e) {
 			System.err.println("Error in reading configuratios file");
 			e.printStackTrace();
+			return null;
 		}
 		
 		// ConfiguratorParser.class.getResourceAsStream(MAIN_CONF_FILE).close();
@@ -141,6 +145,7 @@ public class ConfiguratorParser {
 			} catch (IOException e) {
 				System.err.println("Error in closing properties file");
 				e.printStackTrace();
+				return null;
 			}			
 		}
 		
@@ -152,7 +157,7 @@ public class ConfiguratorParser {
 	 * 
 	 * @param filePathDomains
 	 */
-	private static void readDomains(String filePathDomains){
+	private static boolean readDomains(String filePathDomains){
 		
 		name2domain = new HashMap<String, DomainHolder>();
 		
@@ -167,7 +172,7 @@ public class ConfiguratorParser {
 			} catch (FileNotFoundException e) {
 				System.err.println("Error in opening " + filePathDomains);
 				e.printStackTrace();
-				return;
+				return false;
 			}
 		}
 		
@@ -217,6 +222,7 @@ public class ConfiguratorParser {
 		} catch (IOException e) {
 			System.err.println("Error in reading domains file");
 			e.printStackTrace();
+			return false;
 		}
 		
 		if (filePathDomains != null) {
@@ -225,8 +231,11 @@ public class ConfiguratorParser {
 			} catch (IOException e) {
 				System.err.println("Error in closing domains file");
 				e.printStackTrace();
+				return false;
 			}
 		}
+		
+		return true;
 		
 	}
 	
