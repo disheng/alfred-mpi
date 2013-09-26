@@ -90,7 +90,7 @@ public class ConfiguratorParser {
 				}
 				
 				// if the line is a comment
-				if (currentLine.matches("^//.*")) {
+				if (currentLine.matches("^"+COMMENT+".*")) {
 					continue;
 				}
 				

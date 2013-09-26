@@ -19,4 +19,9 @@ public class ResultHolder {
 		return stringResult;
 	}
 
+	@Override
+	public String toString() {
+		return "ResultHolder [booleanResult=" + booleanResult + "]";
+	}
+
 }
