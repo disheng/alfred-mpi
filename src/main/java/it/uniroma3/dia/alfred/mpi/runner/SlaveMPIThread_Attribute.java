@@ -15,6 +15,7 @@ import model.Page;
 import model.Rule;
 import rules.xpath.XPathRule;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 import experiment.OutputManager;
@@ -42,6 +43,7 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
         int trainingSet;
         int testSet;
         
+        System.out.println("Starting thread - " + getOutputName());
         
         // Here we run alf on a single attribute of a domain with the given configuration
 		this.output.open( this.getOutputName() );
@@ -55,8 +57,14 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 		
 		Rule rule = new XPathRule(this.myCfg.getAssociatedDomain().getGoldenXPath(this.attribute));
 		Map<String, String> url2Value = Maps.newHashMap();
+		
+		System.out.println(getOutputName() + "] Filtering pages");
 		for (Page page : allPages) {
-			url2Value.put(page.getTitle(), XPathHandler.executeQueryAsText(page, rule));
+			try {
+				url2Value.put(page.getTitle(), XPathHandler.executeQueryAsText(page, rule));
+			} catch(Exception e) {
+				System.out.println(getOutputName() + "] problem while fetching page " + page.getTitle());
+			}
 		}
 		int occ = 1; // this.experiments.getOccurrence(domain, attribute);
 		
@@ -66,9 +74,11 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 		
 		String experimentResult = null;
 		try {
+			System.out.println(getOutputName() + "] Building experiment class");
 			ExperimentCrowdManagerRunner e = 
 					new ExperimentCrowdManagerRunner(allPages, goldenPage, url2Value, occ, 
 							null, maxExpressiveness, this.getWorkerFunction(workerSimulation), 0.20);
+			System.out.println(getOutputName() + "] Calling experiment class");
 			experimentResult = e.call();
 		} catch (Exception e) {
 			experimentResult = null;
