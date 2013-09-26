@@ -34,8 +34,8 @@ extends Reducer<Text,MapWritable,Text,MapWritable> {
 				
 				result.put((Text)attributeText, partialOutputMap);
 			}
-		}	
-		
+		}
+			
 		context.write(key,result);       
 	}
 }

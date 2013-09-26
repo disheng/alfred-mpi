@@ -9,6 +9,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.CombineFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
+//import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
@@ -46,7 +47,8 @@ public class XPathApplierDriver extends Configured implements Tool {
 		/* ARGS CHECK */
 		if (args.length < 6 && !(args.length >= 8)) {
 			System.err.println("Usage "+NAME+" <pageBucketName> <xPathRulesPathBucketS3> <xPathRulesFileNameS3> " +
-					" <outputPathBucketS3> <outputFolderS3> <numberOfKeys> <optionalKeyPrefix> \n");
+					" <outputPathBucketS3> <outputFolderS3> <numberOfKeys>" +
+					" <optionalReduceTasks> <optionalKeyPrefix>\n");
 			ToolRunner.printGenericCommandUsage(System.err);
 			return -1;
 		}
@@ -64,9 +66,13 @@ public class XPathApplierDriver extends Configured implements Tool {
 		System.err.println("numeroChiavi: "+numeroChiavi);
 
 		String prefisso = "";
+		int numReduceTasks = 1;
 		
 		if((args.length >= 7) && (args[6] != null)){				
-			prefisso = args[6];
+			numReduceTasks = Integer.parseInt(args[6]);
+			if((args.length >= 8) && (args[7] != null)){
+				prefisso = args[7];
+			}
 		}
 
 		Configuration conf = new Configuration();
@@ -98,23 +104,25 @@ public class XPathApplierDriver extends Configured implements Tool {
 
 		job.setInputFormatClass(S3ObjectInputFormat.class);
 		
-		//File map<pagina, list<xpath,res>> su S3
+		//File map<pagina, list<xpath,res>> su S3 
 		job.setOutputFormatClass(SequenceFileOutputFormat.class);
+		//job.setOutputFormatClass(TextOutputFormat.class);
 
 		// Set the input path
 		CombineFileInputFormat.setInputPaths(job, inputPath);
 		// Set the output path
 		SequenceFileOutputFormat.setOutputPath(job, new Path(outputPathS3));
-
+		//TextOutputFormat.setOutputPath(job, new Path(outputPathS3));
+		
 		// Set the jar file to run
 		job.setJarByClass(XPathApplierDriver.class);
 
 		// Set the number of Reducers
-		job.setNumReduceTasks(1);
+		job.setNumReduceTasks(numReduceTasks);
 
 		boolean res = job.waitForCompletion(true);
 
-		long end = System.currentTimeMillis();		
+		long end = System.currentTimeMillis();
 		System.out.println("Time taken: "+ (end - start) + " msec");
 
 		return res ? 0 : 1;
