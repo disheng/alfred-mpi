@@ -7,6 +7,7 @@ import it.uniroma3.dia.alfred.mpi.runner.data.ResultHolder;
 import it.uniroma3.dia.alfred.mpi.runner.s3.GenerateLazyPagesFromDomain;
 import it.uniroma3.dia.alfred.xpath.XPathHandler;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -43,6 +44,7 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
         int testSet;
         
         System.out.println("Starting thread - " + getOutputName());
+        String configDir = this.myCfg.getConfigurationValue(ConfigHolderKeys.OUTPUT_FOLDER_KEY);
         
         // Here we run alf on a single attribute of a domain with the given configuration
 		this.output.open( this.getOutputName() );
@@ -89,8 +91,10 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 		if (experimentResult != null) {
 			// Save it?
 			this.output.addLine(getOutputName(), experimentResult);	
-			this.output.close(getOutputName());
 		}
+		
+		this.output.close(getOutputName());
+		this.moveFileTo(configDir, getOutputName());
 		
 		return new ResultHolder(((experimentResult != null) && (experimentResult.length() > 0)), experimentResult);
 	}
@@ -111,5 +115,14 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 		}
 		
 		return wfDefault;
+	}
+	
+	private void moveFileTo(String directory, String name) {
+		try {
+			File toMove = new File(name);
+			toMove.renameTo(new File(directory + "/" + toMove.getName()));
+		} catch(Exception e) {
+			System.out.println("Unable to move " + name + " to " + directory);
+		}
 	}
 }

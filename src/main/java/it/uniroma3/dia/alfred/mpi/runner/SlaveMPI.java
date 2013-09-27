@@ -1,11 +1,14 @@
 package it.uniroma3.dia.alfred.mpi.runner;
 
 import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
+import it.uniroma3.dia.alfred.mpi.model.constants.ConfigHolderKeys;
 import it.uniroma3.dia.alfred.mpi.model.serializer.ConfigHolderSerializable;
 import it.uniroma3.dia.alfred.mpi.runner.MPIConstants.AbortReason;
 import it.uniroma3.dia.alfred.mpi.runner.MPIConstants.TagValue;
 import it.uniroma3.dia.alfred.mpi.runner.data.ResultHolder;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -133,6 +136,7 @@ class SlaveMPI {
         
         for (ConfigHolder cfgCurr: confPerWorker) {
     		attributeList = cfgCurr.getAssociatedDomain().getXPathNames();
+    		createOutputDirForConf(cfgCurr);
     		
     		for(String attrCurrent: attributeList) {
     			threadResults.add(executor.submit(new SlaveMPIThread_Attribute(cfgCurr, attrCurrent, rank)));
@@ -153,5 +157,15 @@ class SlaveMPI {
         }
         
         return bResult;
+	}
+	
+	private static void createOutputDirForConf(ConfigHolder cfg) {
+		String configDir = cfg.getConfigurationValue(ConfigHolderKeys.OUTPUT_FOLDER_KEY);
+		
+		try {
+			Files.createDirectories(Paths.get(configDir));
+		} catch(Exception e) {
+			System.out.println("Directory " + configDir + " might already exist.");
+		}
 	}
 }
