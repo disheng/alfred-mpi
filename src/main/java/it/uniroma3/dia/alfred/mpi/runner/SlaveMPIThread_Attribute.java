@@ -18,6 +18,7 @@ import model.Page;
 import model.Rule;
 import rules.xpath.XPathRule;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import experiment.OutputManager;
@@ -38,7 +39,7 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 
 	@Override
 	public ResultHolder call() throws Exception {
-        List<Page> allPages;
+        List<Page> allPages = Lists.newLinkedList();
         Page goldenPage;
         int trainingSet;
         @SuppressWarnings("unused")
@@ -52,15 +53,19 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 		trainingSet = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.TRAINING_SIZE_KEY) );
 		testSet = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.TESTING_SIZE_KEY) );
 
-		allPages = GenerateLazyPagesFromDomain.getPages(this.myCfg.getAssociatedDomain(), trainingSet /*+ testSet*/);
+		
 		goldenPage = GenerateLazyPagesFromDomain.getGoldenPage(this.myCfg.getAssociatedDomain());
 		// Add also golden
 		allPages.add(goldenPage);
+		//
+		allPages.addAll( GenerateLazyPagesFromDomain.getPages(this.myCfg.getAssociatedDomain(), trainingSet /*+ testSet*/) );
+
 		
 		Rule rule = new XPathRule(this.myCfg.getAssociatedDomain().getGoldenXPath(this.attribute));
 		Map<String, String> url2Value = Maps.newHashMap();
 		
-		int maxExpressiveness = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.MAX_EXPRESSIVENESS_KEY) );
+		// int maxExpressiveness = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.MAX_EXPRESSIVENESS_KEY) );
+		int times = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.ITERATIONS_KEY) );
 		String workerSimulation = this.myCfg.getConfigurationValue(ConfigHolderKeys.WORKER_SIMULATION_KEY);
 		
 		System.out.println(getOutputName() + "] Filtering pages");
@@ -81,7 +86,9 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 			System.out.println(getOutputName() + "] Building experiment class");
 			ExperimentCrowdManagerRunner e = 
 					new ExperimentCrowdManagerRunner(allPages, goldenPage, url2Value, occ, 
-							null, maxExpressiveness, this.getWorkerFunction(workerSimulation), 0.20);
+							null, times, this.getWorkerFunction(workerSimulation), 0.20);
+			
+			
 			System.out.println(getOutputName() + "] Calling experiment class");
 			experimentResult = e.call();
 		} catch (Exception e) {

@@ -5,9 +5,10 @@ OMPI_BIN=$OMPI_PATH/bin
 OMPI_LIB=$OMPI_PATH/lib
 
 JAR_FILE=alfred-mpi-0.0.1-SNAPSHOT-mpi.jar
-OMPI_PROC_COUNT=5
+OMPI_PROC_COUNT=3
+JAVA_MEMORY_OPTIONS="-XX:MaxPermSize=128m -Xmx2G"
 
 export PATH=$OMPI_BIN:$PATH
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$OMPI_LIB
 
-mpirun -n $OMPI_PROC_COUNT java -d64 -Djava.library.path=$OMPI_LIB -jar $JAR_FILE $@
+mpirun -n $OMPI_PROC_COUNT java -d64 $JAVA_MEMORY_OPTIONS -Djava.library.path=$OMPI_LIB -jar $JAR_FILE $@
