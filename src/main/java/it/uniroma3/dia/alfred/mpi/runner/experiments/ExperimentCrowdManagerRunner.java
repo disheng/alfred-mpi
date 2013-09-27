@@ -74,7 +74,7 @@ public class ExperimentCrowdManagerRunner implements Callable<String> {
 		// selects which worker should be simulated
 		String res = "";
 		for (int i=0; i<this.times ; i++){
-			res += this.runCrowdManager();
+			res += this.runCrowdManager() + "\n";
 		}
 		
 		return res;
