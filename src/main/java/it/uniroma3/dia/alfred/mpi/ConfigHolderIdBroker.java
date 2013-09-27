@@ -7,7 +7,7 @@ class ConfigHolderIdBroker {
 	private ConfigHolderIdBroker() {}
 	
 	
-	private static final String ID_DIVISOR = "_";
+	protected static final String ID_DIVISOR = "_";
 
 	public static String getId() {
 		return getId(UUID.randomUUID().toString(), UUID.randomUUID().toString());
