@@ -185,24 +185,24 @@ public class ConfiguratorParser {
 			while( (currentLine = reader.readLine()) != null) {
 				
 				// if the line is empty
-				if (currentLine.matches("\\s*")) {
+				if (currentLine.matches("^\\s*")) {
+					continue;
+				}
+				
+				// if the line is a comment
+				if (currentLine.matches("^"+COMMENT+".*")) {
 					continue;
 				}
 				
 				// if contains a new definition
-				if (currentLine.matches("\\[.*\\]")) {
+				if (currentLine.matches("^\\[.*\\]$")) {
 					currentDomainHolder = new DomainHolder();
 					continue;
 				}
 				
-				key = currentLine.split(DELIMITER)[0];
+				key = currentLine.split(DELIMITER)[0];		
+				value = currentLine.split(DELIMITER,2)[1];
 				
-				if (currentLine.matches(".*"+DELIMITER+".*"+DELIMITER+".*")) {
-					value = currentLine.substring(key.length()+1);
-				} else {
-					value = currentLine.split(DELIMITER)[1];
-				}
-
 				if (key.equalsIgnoreCase(DomainHolderKeys.DOMAIN_ID_KEY)){
 					currentDomainHolder.setConfigurationValue(key, value);
 					name2domain.put(value, currentDomainHolder);
