@@ -8,12 +8,12 @@ import org.w3c.dom.Document;
 
 import experiment.LazyPageProxy;
 
-public class LazyPageProxyS3Synchro extends LazyPageProxy {
+public class LazyPageProxyS3Cache extends LazyPageProxy {
 	private String bucketName;
 	private String content;
 	private boolean contentLoaded;
 	
-	public LazyPageProxyS3Synchro(String path, String buckName) {
+	public LazyPageProxyS3Cache(String path, String buckName) {
 		super(null, path);
 		
 		this.bucketName = buckName;
@@ -25,13 +25,16 @@ public class LazyPageProxyS3Synchro extends LazyPageProxy {
 		return getDocument(new StringReader(this.getContent()));
 	}
 	
-	public synchronized String getContent(){
+	public String getContent(){
 		if (this.contentLoaded) {
 			return this.content;
 		}
 		
 		this.content = S3Uploader.getInstance().getPageFromBucket(this.bucketName, this.path).getContent();
-		this.contentLoaded = true;
+		if (this.content == null) {
+			this.contentLoaded = true;
+		}
+		
 		return this.content;
 	}
 }

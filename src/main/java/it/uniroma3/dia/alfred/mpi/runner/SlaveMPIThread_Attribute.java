@@ -4,6 +4,8 @@ import it.uniroma3.dia.alfred.mpi.model.ConfigHolder;
 import it.uniroma3.dia.alfred.mpi.model.constants.ConfigHolderKeys;
 import it.uniroma3.dia.alfred.mpi.model.constants.DomainHolderKeys;
 import it.uniroma3.dia.alfred.mpi.runner.data.ResultHolder;
+import it.uniroma3.dia.alfred.mpi.runner.experiments.ExperimentCrowdManagerRunner;
+import it.uniroma3.dia.alfred.mpi.runner.experiments.ExperimentCrowdManagerRunner.WORKER_FUNCTION;
 import it.uniroma3.dia.alfred.mpi.runner.s3.GenerateLazyPagesFromDomain;
 import it.uniroma3.dia.alfred.xpath.XPathHandler;
 
@@ -19,8 +21,6 @@ import rules.xpath.XPathRule;
 import com.google.common.collect.Maps;
 
 import experiment.OutputManager;
-import experiment.runner.ExperimentCrowdManagerRunner;
-import experiment.runner.ExperimentCrowdManagerRunner.WORKER_FUNCTION;
 
 public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 	

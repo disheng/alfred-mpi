@@ -80,7 +80,7 @@ public class GenerateLazyPagesFromDomain {
 		List<Page> pagesReturn = Lists.newLinkedList();
 		
 		for(String uri: uriList) {
-			pagesReturn.add(new LazyPageProxyS3(uri, bucketName));
+			pagesReturn.add(new LazyPageProxyS3Cache(uri, bucketName));
 		}
 		
 		return pagesReturn;
