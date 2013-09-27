@@ -18,6 +18,9 @@ import mpi.MPIException;
 import com.google.common.collect.Lists;
 
 class SlaveMPI {
+	private static int MIN_THREADS = 1;
+	private static int MAX_THREADS = 4;
+	
 	private SlaveMPI() {}
 
 	public static void run() throws MPIException {
@@ -123,7 +126,7 @@ class SlaveMPI {
 	
 	private static List<ResultHolder> runThreads(int rank, List<ConfigHolder> confPerWorker) {
 		// Execute configurations in parallel if necessary
-        ExecutorService executor = Executors.newFixedThreadPool(Math.max(Runtime.getRuntime().availableProcessors() - 1, 1));
+        ExecutorService executor = Executors.newFixedThreadPool(Math.max(Math.min(MAX_THREADS, Runtime.getRuntime().availableProcessors() - 1), MIN_THREADS));
         List<Future<ResultHolder>> threadResults = Lists.newArrayList();
         
         List<String> attributeList;
