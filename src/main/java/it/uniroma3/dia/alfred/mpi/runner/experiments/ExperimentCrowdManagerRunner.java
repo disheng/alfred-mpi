@@ -1,5 +1,6 @@
 package it.uniroma3.dia.alfred.mpi.runner.experiments;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,6 @@ import alfcore.AlfCoreFacade;
 import alfcore.AlfCoreFactory;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import crowd.CrowdManager;
 import crowd.WorkerTask;
@@ -43,9 +43,10 @@ public class ExperimentCrowdManagerRunner implements Callable<String> {
 
 	public ExperimentCrowdManagerRunner(List<Page> all, Page firstPage,
 			Map<String, String> url2Value, int occ, ExperimentKey main, int times, WORKER_FUNCTION f, double expo) {
-		this.allPages = Lists.newLinkedList(all);
+		this.allPages = new LinkedList<Page>(all);
+		this.training = Lists.newLinkedList();
 		this.firstPage = firstPage;
-		this.page2values = Maps.newHashMap(url2Value);
+		this.page2values = new HashMap<String, String>(url2Value);
 		this.occ = occ;
 		this.key = main;
 		this.times = times;
@@ -63,7 +64,6 @@ public class ExperimentCrowdManagerRunner implements Callable<String> {
 	@Override
 	public String call() throws Exception {
 		this.allPages.add(firstPage);
-
 		this.training.addAll(this.allPages);
 
 		this.firstCore = AlfCoreFactory.getSystemFromConfiguration(false, 5, 5, 0.999, 0.9999, 10,"Entropy", 0.9);

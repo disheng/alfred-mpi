@@ -41,7 +41,8 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
         List<Page> allPages;
         Page goldenPage;
         int trainingSet;
-        int testSet;
+        @SuppressWarnings("unused")
+		int testSet;
         
         System.out.println("Starting thread - " + getOutputName());
         String configDir = this.myCfg.getConfigurationValue(ConfigHolderKeys.OUTPUT_FOLDER_KEY);
@@ -51,7 +52,7 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 		trainingSet = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.TRAINING_SIZE_KEY) );
 		testSet = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.TESTING_SIZE_KEY) );
 
-		allPages = GenerateLazyPagesFromDomain.getPages(this.myCfg.getAssociatedDomain(), trainingSet + testSet);
+		allPages = GenerateLazyPagesFromDomain.getPages(this.myCfg.getAssociatedDomain(), trainingSet /*+ testSet*/);
 		goldenPage = GenerateLazyPagesFromDomain.getGoldenPage(this.myCfg.getAssociatedDomain());
 		// Add also golden
 		allPages.add(goldenPage);
