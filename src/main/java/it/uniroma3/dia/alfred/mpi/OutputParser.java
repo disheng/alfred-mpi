@@ -30,7 +30,7 @@ public class OutputParser {
 	}
 	
 	@SuppressWarnings("resource")
-	public static boolean parse(List<ConfigHolder> configHolderList, String outputFilesPath) {
+	public static boolean parse(List<ConfigHolder> configHolderList, String workingDirectory, String outputFilesPath) {
 		
 		domain2XPathHolderMap = Maps.newHashMap();
 		
@@ -44,10 +44,19 @@ public class OutputParser {
 		BufferedReader reader = null;
 		String currentLine = null;
 		
+		if (workingDirectory==null){
+			workingDirectory = "";
+		}
+		
 		for (ConfigHolder configHolder : configHolderList) {
 			
-			currentOutputFolderPath = configHolder.getConfigurationValue(ConfigHolderKeys.OUTPUT_FOLDER_KEY);
+			currentOutputFolderPath = workingDirectory + configHolder.getConfigurationValue(ConfigHolderKeys.OUTPUT_FOLDER_KEY);
 			currentOutputFolder = new File(currentOutputFolderPath);
+			
+			System.out.println(currentOutputFolderPath);
+			System.out.println(currentOutputFolder.exists());
+			System.out.println(currentOutputFolder.getPath());
+			System.out.println(currentOutputFolder.getName());
 			
 			currentOutputFilter.setUidToFilter(configHolder.getUid());
 			
@@ -56,7 +65,7 @@ public class OutputParser {
 			
 			for(File currentFile : currentOutputFolder.listFiles(currentOutputFilter)){
 				
-				currentAttribute = currentFile.getName().split("-")[1]; //cambiare
+				currentAttribute = currentFile.getName().split("-")[2]; //cambiare
 				
 				try {
 					reader = new BufferedReader(new FileReader(currentFile));
@@ -76,7 +85,7 @@ public class OutputParser {
 					return false;
 				}
 				
-				currentXPathHolder.addXpathToAttr(currentAttribute, configHolder.getConfigurationValue(currentAttribute));
+				currentXPathHolder.addXpathToAttr(currentAttribute, configHolder.getAssociatedDomain().getGoldenXPath(currentAttribute));
 				
 			}
 
