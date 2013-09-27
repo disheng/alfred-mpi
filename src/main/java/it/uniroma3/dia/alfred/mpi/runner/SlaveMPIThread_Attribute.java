@@ -64,7 +64,6 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 		Rule rule = new XPathRule(this.myCfg.getAssociatedDomain().getGoldenXPath(this.attribute));
 		Map<String, String> url2Value = Maps.newHashMap();
 		
-		// int maxExpressiveness = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.MAX_EXPRESSIVENESS_KEY) );
 		int times = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.ITERATIONS_KEY) );
 		String workerSimulation = this.myCfg.getConfigurationValue(ConfigHolderKeys.WORKER_SIMULATION_KEY);
 		
@@ -79,15 +78,33 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 		int occ = 1; // this.experiments.getOccurrence(domain, attribute);
 		
 		// Call alfred crowd (disheng says)
-
+		boolean expansion = getExpansion( this.myCfg.getConfigurationValue(ConfigHolderKeys.ALGORITHMS_CORE_KEY) );
+		int minExpressiveness = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.MIN_EXPRESSIVENESS_KEY) );
+		int maxExpressiveness = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.MAX_EXPRESSIVENESS_KEY) );
+		int maxMQ = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.MAX_MQ_NUMBER_KEY) );
+		double probThresh = Double.parseDouble( this.myCfg.getConfigurationValue(ConfigHolderKeys.PROBABILITY_THREASHOLD_KEY) );
+		double acctThresh = Double.parseDouble( this.myCfg.getConfigurationValue(ConfigHolderKeys.ACCURACY_THREASHOLD_KEY) );
+		double workerAcc = Double.parseDouble( this.myCfg.getConfigurationValue(ConfigHolderKeys.DEFAULT_ANSWER_PROBABILITY_KEY));
+		String algChooser = this.myCfg.getConfigurationValue(ConfigHolderKeys.ALGORITHMS_CHOOSER_KEY);
+		System.out.println(getOutputName() + "] Exp set: " + expansion + "-" + minExpressiveness + " - " + maxExpressiveness +
+				" - " + probThresh + " - " + acctThresh + " - " + maxMQ + 
+				" - " + algChooser + " - " + workerAcc);
 		
 		String experimentResult = null;
 		try {
 			System.out.println(getOutputName() + "] Building experiment class");
 			ExperimentCrowdManagerRunner e = 
 					new ExperimentCrowdManagerRunner(allPages, goldenPage, url2Value, occ, 
-							null, times, this.getWorkerFunction(workerSimulation), 0.20);
+							null, times, getWorkerFunction(workerSimulation), 0.20);
 			
+			e.setExpansion(expansion);
+			e.setInitialExp(minExpressiveness);
+			e.setMaxExp(maxExpressiveness);
+			e.setMaxMQ(maxMQ);
+			e.setProbt(probThresh);
+			e.setAcct(acctThresh);
+			e.setWorkeraccuracy(workerAcc);
+			e.setSampleChooser(algChooser);
 			
 			System.out.println(getOutputName() + "] Calling experiment class");
 			experimentResult = e.call();
@@ -113,7 +130,7 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 			"-" + this.attribute + "-" + this.processRank + "-" + Thread.currentThread().getId();
 	}
 	
-	private WORKER_FUNCTION getWorkerFunction(String wf) {
+	private static WORKER_FUNCTION getWorkerFunction(String wf) {
 		WORKER_FUNCTION wfDefault = WORKER_FUNCTION.EXPONENTIAL;
 		
 		if (wf.equalsIgnoreCase(ConfigHolderKeys.WORKER_SIMULATION.REAL.getReason() )) {
@@ -123,6 +140,10 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 		}
 		
 		return wfDefault;
+	}
+	
+	private static boolean getExpansion(String algCore) {
+		return algCore.equalsIgnoreCase(ConfigHolderKeys.ALGORITHMS_CORE.SRM.getReason());
 	}
 	
 	private void moveFileTo(String directory, String name) {
