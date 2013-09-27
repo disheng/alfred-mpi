@@ -89,6 +89,7 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 		if (experimentResult != null) {
 			// Save it?
 			this.output.addLine(getOutputName(), experimentResult);	
+			this.output.close(getOutputName());
 		}
 		
 		return new ResultHolder(((experimentResult != null) && (experimentResult.length() > 0)), experimentResult);
@@ -97,7 +98,7 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 	private String getOutputName() {
 		return this.myCfg.getUid() + "-" + 
 			this.myCfg.getAssociatedDomain().getConfigurationValue(DomainHolderKeys.DOMAIN_ID_KEY) +
-			"-" + this.processRank + "-" + this.attribute;
+			"-" + this.attribute + "-" + this.processRank + "-" + Thread.currentThread().getId();
 	}
 	
 	private WORKER_FUNCTION getWorkerFunction(String wf) {
