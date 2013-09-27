@@ -40,4 +40,18 @@ public class ConfigHolderKeys {
 			return this.reason;
 		}
 	}
+	
+	public enum ALGORITHMS_CORE {
+		SRM("Srm"),
+		Simple("Simple");
+		
+		private String reason;
+		ALGORITHMS_CORE(String reason) {
+			this.reason = reason;
+		}
+		
+		public String getReason() {
+			return this.reason;
+		}
+	}
 }

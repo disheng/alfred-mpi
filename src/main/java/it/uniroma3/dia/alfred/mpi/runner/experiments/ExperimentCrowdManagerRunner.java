@@ -41,8 +41,15 @@ public class ExperimentCrowdManagerRunner implements Callable<String> {
 	private int times;
 	private WorkerSimulation simul;
 	// Alf parameters
+	private boolean expansion;
 	private int initialExp;
 	private int maxExp;
+	private double probt;
+	private double acct;
+	private int maxMQ;
+	String sampleChooser;
+	double workeraccuracy;
+	
 
 	public ExperimentCrowdManagerRunner(List<Page> all, Page firstPage,
 			Map<String, String> url2Value, int occ, ExperimentKey main, int times, WORKER_FUNCTION f, double expo) {
@@ -61,7 +68,19 @@ public class ExperimentCrowdManagerRunner implements Callable<String> {
 		if (f.equals(WORKER_FUNCTION.EXPONENTIAL)){
 			this.simul = new ExponentialWorkerSimulation(expo);
 		}
-			
+		
+		initDefaultALFParams();
+	}
+	
+	private void initDefaultALFParams() {
+		this.expansion = false;
+		this.initialExp = 5;
+		this.maxExp = 5;
+		this.probt = 0.999;
+		this.acct = 0.9999;
+		this.maxMQ = 10;
+		this.sampleChooser = "Entropy";
+		this.workeraccuracy = 0.9;
 	}
 
 	@Override
@@ -69,7 +88,8 @@ public class ExperimentCrowdManagerRunner implements Callable<String> {
 		// this.allPages.add(firstPage);
 		this.training.addAll(this.allPages);
 
-		this.firstCore = AlfCoreFactory.getSystemFromConfiguration(false, 5, 5, 0.999, 0.9999, 10,"Entropy", 0.9);
+		// this.firstCore = AlfCoreFactory.getSystemFromConfiguration(false, 5, 5, 0.999, 0.9999, 10, "Entropy", 0.9);
+		this.firstCore = AlfCoreFactory.getSystemFromConfiguration(this.expansion, this.initialExp, this.maxExp, this.probt, this.acct, this.maxMQ, this.sampleChooser, this.workeraccuracy);
 		this.firstCore.setUp("crowd", new MaterializedPageSet(training));
 		this.firstCore.firstSample(firstPage.getTitle(), this.page2values.get(firstPage.getTitle()), this.occ);
 		
@@ -162,5 +182,37 @@ public class ExperimentCrowdManagerRunner implements Callable<String> {
 		AutomaticResponderFile resp = new AutomaticResponderFile(page2values, key);
 		resp.computeCorrectness(testPages, rule);
 		return resp.getAccuracy();
+	}
+
+	public void setExpansion(boolean expansion) {
+		this.expansion = expansion;
+	}
+
+	public void setInitialExp(int initialExp) {
+		this.initialExp = initialExp;
+	}
+
+	public void setMaxExp(int maxExp) {
+		this.maxExp = maxExp;
+	}
+
+	public void setProbt(double probt) {
+		this.probt = probt;
+	}
+
+	public void setAcct(double acct) {
+		this.acct = acct;
+	}
+
+	public void setMaxMQ(int maxMQ) {
+		this.maxMQ = maxMQ;
+	}
+
+	public void setSampleChooser(String sampleChooser) {
+		this.sampleChooser = sampleChooser;
+	}
+
+	public void setWorkeraccuracy(double workeraccuracy) {
+		this.workeraccuracy = workeraccuracy;
 	}
 }
