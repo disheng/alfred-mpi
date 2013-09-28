@@ -1,1 +1,0 @@
-{"xpaths":{"Name":["//*[@itemprop='name']/text()","/HTML/BODY[1]/DIV[3]/DIV[1]/DIV[4]/DIV[3]/DIV[2]/DIV[1]/TABLE[1]/TBODY[1]/TR[1]/TD[2]/DIV[1]/DIV[1]/H1[1]/text()[1]"],"AltName":["//*[@itemprop='name']/text()","//H1[@class='header'][1]/text()[1]"]}}

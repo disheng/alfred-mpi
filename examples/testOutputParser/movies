@@ -1,1 +1,0 @@
-{"xpaths":{"Rating":["//*[@itemprop='ratingValue']/text()","/HTML/BODY[1]/DIV[3]/DIV[1]/DIV[6]/DIV[3]/DIV[2]/DIV[1]/DIV[1]/TABLE[1]/TBODY[1]/TR[1]/TD[2]/DIV[3]/DIV[1]/text()[1]"],"Title":["/HTML/BODY[1]/DIV[3]/DIV[1]/DIV[6]/DIV[3]/DIV[2]/DIV[1]/DIV[1]/TABLE[1]/TBODY[1]/TR[1]/TD[2]/H1[1]/text()[1]","//*[@itemprop='name']/text()"]}}
