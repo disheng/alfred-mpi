@@ -9,11 +9,10 @@ import it.uniroma3.dia.alfred.mpi.runner.MPIConstants.TagValue;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.DeserializerFactory.Config;
-
 import mpi.MPI;
 import mpi.MPIException;
+
+import org.apache.log4j.Logger;
 
 import com.google.common.collect.Lists;
 
@@ -162,9 +161,7 @@ class MasterMPI {
 			currentLogger.error("Discrepancy between sizes");
 		}
 		
-		for(int i = 0; i < Math.min(resultBool.size(), totalCfgCount); ++i) {
-			currentLogger.info("Process[Master]: Result for " +lstCfgHolder.get(i).getUid() + " = " + resultBool.get(i));
-		}
+		currentLogger.info("Process[Master]: Results " + resultBool );
 		
 		boolean bResult = OutputParser.parse(lstCfgHolder);
 		if (bResult) {
