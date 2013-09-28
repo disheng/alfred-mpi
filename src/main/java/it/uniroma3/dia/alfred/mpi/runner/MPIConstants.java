@@ -30,7 +30,8 @@ class MPIConstants {
 		WORK_SEND_DATA(4),
 		WORK_RECV_DATA(5),
 		CONFIG_FAIL(100),
-		HELP_ABORT(1900);
+		HELP_ABORT(1927),
+		CMD_LINE_ABORT(1900);
 		
 		private int reason;
 		AbortReason(int reason) {

@@ -17,16 +17,25 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 public class OutputParser {
+	private OutputParser() {}
 
+	private static final String DEFAULT_WORKING_DIRECTORY = "";
+	private static final String DEFAULT_OUTPUT_DIRECTORY = "ouputJson";
+	private static final String DEFAULT_FILE_EXT = ".json";
+	
 	private static Map<String, XPathHolder> domain2XPathHolderMap;
 
 	private static XPathHolder getXPathFromDomain(String domain){
-		XPathHolder xPathHolder = domain2XPathHolderMap.get(domain);
+	XPathHolder xPathHolder = domain2XPathHolderMap.get(domain);
 		if (xPathHolder == null){
 			xPathHolder = new XPathHolder();
 			domain2XPathHolderMap.put(domain, xPathHolder);
 		}
 		return xPathHolder;
+	}
+	
+	public static boolean parse(List<ConfigHolder> configHolderList) {
+		return parse(configHolderList, DEFAULT_WORKING_DIRECTORY, DEFAULT_OUTPUT_DIRECTORY);
 	}
 	
 	@SuppressWarnings("resource")
@@ -92,7 +101,7 @@ public class OutputParser {
 		}
 		
 		for(String domain : domain2XPathHolderMap.keySet()){
-			XPathHolderSerializable.toJsonFile(domain2XPathHolderMap.get(domain), outputFilesPath+"/"+domain);
+			XPathHolderSerializable.toJsonFile(domain2XPathHolderMap.get(domain), outputFilesPath+"/"+domain+DEFAULT_FILE_EXT);
 		}
 
 		domain2XPathHolderMap.clear();

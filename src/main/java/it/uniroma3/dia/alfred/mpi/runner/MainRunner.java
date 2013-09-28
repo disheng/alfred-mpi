@@ -43,7 +43,7 @@ public class MainRunner {
 			try {
 				cmd = parser.parse( cmdLineOptions, args);
 			} catch (ParseException e) {
-				e.printStackTrace();
+				RunAlfred.abort(AbortReason.CMD_LINE_ABORT);
 				return;
 			}
 			

@@ -15,6 +15,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.apache.log4j.Logger;
+
 import mpi.MPI;
 import mpi.MPIException;
 
@@ -22,7 +24,8 @@ import com.google.common.collect.Lists;
 
 class SlaveMPI {
 	private static int MIN_THREADS = 1;
-	private static int MAX_THREADS = 4;
+	private static int MAX_THREADS = 8;
+	private static Logger currentLogger = Logger.getLogger(SlaveMPI.class);
 	
 	private SlaveMPI() {}
 
@@ -33,15 +36,18 @@ class SlaveMPI {
 		
 		howMuchWork = recvWorkQty();
 
+		currentLogger.debug("Process[" + MPI.COMM_WORLD.Rank() + "]:recv: " + howMuchWork);
 //		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]:recv: " + howMuchWork);
 		
 		ackWorkQty(howMuchWork);
 		
+		currentLogger.debug("Process[" + MPI.COMM_WORLD.Rank() + "]:end");
 //		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]:end");
 		
 		// Recv confs
 		confPerWorker = recvConfigs(howMuchWork);
-		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: Conf("+confPerWorker.size()+") receive done");
+		currentLogger.info("Process[" + MPI.COMM_WORLD.Rank() + "]: Conf("+confPerWorker.size()+") receive done");
+		// System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: Conf("+confPerWorker.size()+") receive done");
 		
 //		RunAlfred.dumpConf(MPI.COMM_WORLD.Rank(), confPerWorker);
 		
@@ -50,7 +56,8 @@ class SlaveMPI {
 		}
 		
 		List<ResultHolder> execResults = runThreads(MPI.COMM_WORLD.Rank(), confPerWorker);
-		System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: ConfResults: " + execResults);
+		currentLogger.info("Process[" + MPI.COMM_WORLD.Rank() + "]: ConfResults: " + execResults);
+		// System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: ConfResults: " + execResults);
 		
 		// Synchro after thread execution
 		MPI.COMM_WORLD.Barrier();
@@ -68,7 +75,8 @@ class SlaveMPI {
 		try {
 			MPI.COMM_WORLD.Recv(messageRecv, 0, 1, MPI.INT, MPIConstants.MASTER, TagValue.TAG_SIZE_CONF.getValue());
 		} catch (MPIException e) {
-			e.printStackTrace();
+			currentLogger.error("recvWorkQty()", e);
+			// e.printStackTrace();
 			RunAlfred.abort(AbortReason.WORK_SEND);
 		}
 		
@@ -84,7 +92,7 @@ class SlaveMPI {
 		try {
 			MPI.COMM_WORLD.Reduce(messageSend, 0, messageRecv, 0, 1, MPI.INT, MPI.SUM, MPIConstants.MASTER);
 		} catch (MPIException e) {
-			e.printStackTrace();
+			currentLogger.error("ackWorkQty()", e);
 			RunAlfred.abort(AbortReason.WORK_SEND_ACK);
 		}
 	}
@@ -106,7 +114,8 @@ class SlaveMPI {
 				confPerWorker.add( ConfigHolderSerializable.fromJson(String.valueOf(stringRecvBuffer)) );
 //				System.out.println("Process[" + MPI.COMM_WORLD.Rank() + "]: Receiving conf " + confPerWorker.get(confPerWorker.size() - 1).getUid() );				
 			} catch (MPIException e) {
-				e.printStackTrace();
+				currentLogger.error("recvConfigs()", e);
+				// e.printStackTrace();
 				RunAlfred.abort(AbortReason.WORK_RECV_DATA);
 			}
 		}
@@ -150,9 +159,11 @@ class SlaveMPI {
         	try {
 				bResult.add(bCurr.get());
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				currentLogger.error("runThreads()", e);
+				// e.printStackTrace();
 			} catch (ExecutionException e) {
-				e.printStackTrace();
+				currentLogger.error("runThreads()", e);
+				// e.printStackTrace();
 			}
         }
         
@@ -165,7 +176,8 @@ class SlaveMPI {
 		try {
 			Files.createDirectories(Paths.get(configDir));
 		} catch(Exception e) {
-			System.out.println("Directory " + configDir + " might already exist.");
+			// System.out.println("Directory " + configDir + " might already exist.");
+			currentLogger.error("Directory " + configDir + " might already exist.", e);
 		}
 	}
 }

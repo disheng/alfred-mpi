@@ -16,6 +16,9 @@ import java.util.concurrent.Callable;
 
 import model.Page;
 import model.Rule;
+
+import org.apache.log4j.Logger;
+
 import rules.xpath.XPathRule;
 
 import com.google.common.collect.Lists;
@@ -29,12 +32,19 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 	private String attribute;
 	private int processRank;
 	private OutputManager output;
+	private Logger currentLogger;
 	
 	public SlaveMPIThread_Attribute(ConfigHolder cfg, String attribute, int rankName) {
 		this.myCfg = cfg;
 		this.attribute = attribute;
 		this.processRank = rankName;
 		this.output = new OutputManager();
+		// Log
+		initThreadLogging();
+	}
+	
+	private void initThreadLogging() {
+		this.currentLogger = Logger.getLogger(SlaveMPIThread_Attribute.class.getCanonicalName() + "-" + getOutputName()); 
 	}
 
 	@Override
@@ -45,7 +55,8 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
         @SuppressWarnings("unused")
 		int testSet;
         
-        System.out.println("Starting thread - " + getOutputName());
+//        System.out.println("Starting thread - " + getOutputName());
+        this.currentLogger.info("Starting thread - " + getOutputName());
         String configDir = this.myCfg.getConfigurationValue(ConfigHolderKeys.OUTPUT_FOLDER_KEY);
         
         // Here we run alf on a single attribute of a domain with the given configuration
@@ -67,12 +78,14 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 		int times = Integer.valueOf( this.myCfg.getConfigurationValue(ConfigHolderKeys.ITERATIONS_KEY) );
 		String workerSimulation = this.myCfg.getConfigurationValue(ConfigHolderKeys.WORKER_SIMULATION_KEY);
 		
-		System.out.println(getOutputName() + "] Filtering pages");
+		// System.out.println(getOutputName() + "] Filtering pages");
+		this.currentLogger.info("Filtering pages");
 		for (Page page : allPages) {
 			try {
 				url2Value.put(page.getTitle(), XPathHandler.executeQueryAsText(page, rule));
 			} catch(Exception e) {
-				System.out.println(getOutputName() + "] problem while fetching/parsing \" " + page.getTitle() + "\" - Ex: " + e.toString());
+				this.currentLogger.error("problem while fetching/parsing \" " + page.getTitle() + "\"", e);
+				// System.out.println(getOutputName() + "] problem while fetching/parsing \" " + page.getTitle() + "\" - Ex: " + e.toString());
 			}
 		}
 		int occ = 1; // this.experiments.getOccurrence(domain, attribute);
@@ -86,31 +99,40 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 		double acctThresh = Double.parseDouble( this.myCfg.getConfigurationValue(ConfigHolderKeys.ACCURACY_THREASHOLD_KEY) );
 		double workerAcc = Double.parseDouble( this.myCfg.getConfigurationValue(ConfigHolderKeys.DEFAULT_ANSWER_PROBABILITY_KEY));
 		String algChooser = this.myCfg.getConfigurationValue(ConfigHolderKeys.ALGORITHMS_CHOOSER_KEY);
+		
+		this.currentLogger.info("Exp set: " + expansion + "-" + minExpressiveness + " - " + maxExpressiveness +
+				" - " + probThresh + " - " + acctThresh + " - " + maxMQ + 
+				" - " + algChooser + " - " + workerAcc);
+		/*
 		System.out.println(getOutputName() + "] Exp set: " + expansion + "-" + minExpressiveness + " - " + maxExpressiveness +
 				" - " + probThresh + " - " + acctThresh + " - " + maxMQ + 
 				" - " + algChooser + " - " + workerAcc);
+			*/
 		
 		String experimentResult = null;
 		try {
-			System.out.println(getOutputName() + "] Building experiment class");
-			ExperimentCrowdManagerRunner e = 
+			// System.out.println(getOutputName() + "] Building experiment class");
+			this.currentLogger.info("Building experiment class");
+			ExperimentCrowdManagerRunner expRun = 
 					new ExperimentCrowdManagerRunner(allPages, goldenPage, url2Value, occ, 
 							null, times, getWorkerFunction(workerSimulation), 0.20);
 			
-			e.setExpansion(expansion);
-			e.setInitialExp(minExpressiveness);
-			e.setMaxExp(maxExpressiveness);
-			e.setMaxMQ(maxMQ);
-			e.setProbt(probThresh);
-			e.setAcct(acctThresh);
-			e.setWorkeraccuracy(workerAcc);
-			e.setSampleChooser(algChooser);
+			expRun.setExpansion(expansion);
+			expRun.setInitialExp(minExpressiveness);
+			expRun.setMaxExp(maxExpressiveness);
+			expRun.setMaxMQ(maxMQ);
+			expRun.setProbt(probThresh);
+			expRun.setAcct(acctThresh);
+			expRun.setWorkeraccuracy(workerAcc);
+			expRun.setSampleChooser(algChooser);
 			
-			System.out.println(getOutputName() + "] Calling experiment class");
-			experimentResult = e.call();
+			// System.out.println(getOutputName() + "] Calling experiment class");
+			this.currentLogger.info("Calling experiment class");
+			experimentResult = expRun.call();
 		} catch (Exception e) {
 			experimentResult = null;
-			e.printStackTrace();
+			// System.out.println("Error in experiment: " + Lists.newArrayList(e.getStackTrace()));
+			this.currentLogger.error("Error in experiment", e);
 		}
 		
 		if (experimentResult != null) {
@@ -151,7 +173,8 @@ public class SlaveMPIThread_Attribute implements Callable<ResultHolder> {
 			File toMove = new File(name);
 			toMove.renameTo(new File(directory + "/" + toMove.getName()));
 		} catch(Exception e) {
-			System.out.println("Unable to move " + name + " to " + directory);
+			this.currentLogger.error("Unable to move " + name + " to " + directory, e);
+			// System.out.println("Unable to move " + name + " to " + directory);
 		}
 	}
 }
