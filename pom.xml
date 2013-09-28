@@ -48,6 +48,15 @@
 	  </resources>
 	   
 	  <plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<!-- For java 7 use 1.7 -->
+					<source>1.6</source> <!-- Which source java version we should use -->
+					<target>1.6</target> <!-- Which compiled class java version will be -->
+				</configuration>
+			</plugin>	  
 		  	<!-- With shade -->
 		  	<!-- clean package shade:shade -->
 			 <plugin>

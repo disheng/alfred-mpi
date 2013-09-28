@@ -7,8 +7,7 @@ import it.uniroma3.dia.alfred.mpi.runner.MPIConstants.AbortReason;
 import it.uniroma3.dia.alfred.mpi.runner.MPIConstants.TagValue;
 import it.uniroma3.dia.alfred.mpi.runner.data.ResultHolder;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -174,7 +173,7 @@ class SlaveMPI {
 		String configDir = cfg.getConfigurationValue(ConfigHolderKeys.OUTPUT_FOLDER_KEY);
 		
 		try {
-			Files.createDirectories(Paths.get(configDir));
+			new File(configDir + "/").mkdirs();
 		} catch(Exception e) {
 			// System.out.println("Directory " + configDir + " might already exist.");
 			currentLogger.error("Directory " + configDir + " might already exist.", e);

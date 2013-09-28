@@ -20,14 +20,14 @@ public class XPathApplierDriver extends Configured implements Tool {
 	public static final String NAME = "MapredJobDriver";	
 
 	static String S3_BUCKET_NAME = "s3.bucket.name"; //il nome del bucket S3
-	static String S3_KEY_PREFIX = "s3.key.prefix"; //per filtrare i file del bucket si puÚ impostare un prefisso
+	static String S3_KEY_PREFIX = "s3.key.prefix"; //per filtrare i file del bucket si pu√≤ impostare un prefisso
 	static String S3_XPATHRULES_FILENAME = "s3.xpathrules.filename";
 	
 	/**
 	 * Number of files to get from S3 in single request. Default value is 100
 	 */
 	static String S3_MAX_KEYS = "s3.max.keys";
-	static String S3_NUM_OF_KEYS_PER_MAPPER = "s3.input.numOfKeys"; // numero di file che sar‡ raggruppato e inviato ad ogni mapper
+	static String S3_NUM_OF_KEYS_PER_MAPPER = "s3.input.numOfKeys"; // numero di file che sar√† raggruppato e inviato ad ogni mapper
 	static String S3_NUM_OF_MAPPERS = "s3.input.numOfMappers";
 
 	/**
@@ -99,7 +99,7 @@ public class XPathApplierDriver extends Configured implements Tool {
 		// Carico nella distr. il file di configurazione contenente le regole xPath
 		DistributedCache.addCacheFile(new Path(inputRulesPathS3).toUri(), job.getConfiguration());
 
-		job.setMapOutputKeyClass(Text.class); //NOTA: S3ObjectWritable Ë usabile solo come input
+		job.setMapOutputKeyClass(Text.class); //NOTA: S3ObjectWritable √® usabile solo come input
 		job.setMapOutputValueClass(MapWritable.class);
 
 		job.setOutputKeyClass(Text.class);
