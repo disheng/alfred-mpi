@@ -20,7 +20,7 @@ public class OutputParser {
 	private OutputParser() {}
 
 	private static final String DEFAULT_WORKING_DIRECTORY = "";
-	private static final String DEFAULT_OUTPUT_DIRECTORY = "ouputJson";
+	private static final String DEFAULT_OUTPUT_DIRECTORY = "outputJson";
 	private static final String DEFAULT_FILE_EXT = ".json";
 	
 	private static Map<String, XPathHolder> domain2XPathHolderMap;
