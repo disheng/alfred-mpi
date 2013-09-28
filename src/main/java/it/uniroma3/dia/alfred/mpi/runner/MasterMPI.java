@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.DeserializerFactory.Config;
 
 import mpi.MPI;
 import mpi.MPIException;
@@ -152,11 +153,16 @@ class MasterMPI {
 	}
 
 	private static void writeFinalConfiguration(List<Boolean> resultBool, List<ConfigHolder> lstCfgHolder) {
-		if ( resultBool.size() != lstCfgHolder.size() ) {
+		int totalCfgCount = 0;
+		for (ConfigHolder cfgStuff: lstCfgHolder) {
+			totalCfgCount += cfgStuff.getAssociatedDomain().getXPathNames().size();
+		}
+		
+		if ( resultBool.size() != totalCfgCount ) {
 			currentLogger.error("Discrepancy between sizes");
 		}
 		
-		for(int i = 0; i < Math.min(resultBool.size(), lstCfgHolder.size()); ++i) {
+		for(int i = 0; i < Math.min(resultBool.size(), totalCfgCount); ++i) {
 			currentLogger.info("Process[Master]: Result for " +lstCfgHolder.get(i).getUid() + " = " + resultBool.get(i));
 		}
 		

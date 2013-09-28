@@ -95,6 +95,7 @@ public class OutputParser {
 
 		}
 		
+		new File(outputFilesPath + "/").mkdirs();
 		for(String domain : domain2XPathHolderMap.keySet()){
 			XPathHolderSerializable.toJsonFile(domain2XPathHolderMap.get(domain), outputFilesPath+"/"+domain+DEFAULT_FILE_EXT);
 		}
