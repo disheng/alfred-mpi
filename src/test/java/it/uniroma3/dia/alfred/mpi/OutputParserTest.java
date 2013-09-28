@@ -36,11 +36,16 @@ public class OutputParserTest {
 	}
 	
 	private static void setup() {
-		if (new File(TEST_PATH + "/" + ATTORI_FILE).exists()){
-			new File(TEST_PATH + "/" + ATTORI_FILE).delete();
+		File attori = new File(TEST_PATH + "/" + ATTORI_FILE);
+		File movies = new File(TEST_PATH + "/" + MOVIES_FILE);
+		new File(TEST_PATH).mkdirs();
+		
+		if (attori.exists()){
+			attori.delete();
 		}
-		if (new File(TEST_PATH + "/" + MOVIES_FILE).exists()){
-			new File(TEST_PATH + "/" + MOVIES_FILE).delete();
+		
+		if (movies.exists()){
+			movies.delete();
 		}
 	}
 

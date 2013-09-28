@@ -62,11 +62,6 @@ public class OutputParser {
 			currentOutputFolderPath = workingDirectory + configHolder.getConfigurationValue(ConfigHolderKeys.OUTPUT_FOLDER_KEY);
 			currentOutputFolder = new File(currentOutputFolderPath);
 			
-			System.out.println(currentOutputFolderPath);
-			System.out.println(currentOutputFolder.exists());
-			System.out.println(currentOutputFolder.getPath());
-			System.out.println(currentOutputFolder.getName());
-			
 			currentOutputFilter.setUidToFilter(configHolder.getUid());
 			
 			currentDomain = configHolder.getUid().split(ConfigHolderIdBroker.ID_DIVISOR)[1];
