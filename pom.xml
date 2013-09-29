@@ -51,6 +51,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
 				<configuration>
 					<!-- For java 7 use 1.7 -->
 					<source>1.6</source> <!-- Which source java version we should use -->
