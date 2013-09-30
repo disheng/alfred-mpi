@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import mpi.MPI;
 import mpi.MPIException;
+import mpjdev.MPJDevException;
 
 import com.google.common.collect.Lists;
 
@@ -24,7 +25,7 @@ public class MPIAlfred {
 	 */
 
 	
-	public static void main(String[] args) throws MPIException {
+	public static void main(String[] args) throws MPJDevException {
 		MPI.Init(args);
 		
 		int myrank = MPI.COMM_WORLD.Rank();

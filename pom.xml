@@ -191,10 +191,17 @@
 			<artifactId>hadoop-core</artifactId>
 			<version>1.0.3</version>
 		</dependency>
+		<!-- 
 		<dependency>
 		  <groupId>openmpi</groupId>
 		  <artifactId>openmpi</artifactId>
 		  <version>19a1r29179-SNAPSHOT</version>
+		</dependency>
+		-->
+		<dependency>
+		  <groupId>mpj</groupId>
+		  <artifactId>mpj</artifactId>
+		  <version>0.38</version>
 		</dependency>
 		<dependency>
 			<groupId>it.uniroma3.dia.db</groupId>
