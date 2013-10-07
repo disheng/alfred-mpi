@@ -30,7 +30,6 @@ else
 	echo "master"$'\r' > $MACHINEFILENAME
 	for i in `seq 1 $(($inputnumber-1))`
 	do
-		echo `printf "node%03d \n" $i`
 		echo `printf "node%03d \n" $i` >> $MACHINEFILENAME
 	done
 fi
