@@ -12,15 +12,12 @@ public class S3RecordReaderTest {
 	
 	@Test
 	public void testInitialize() {
-		//TODO Not implemented
 	}
 
 	@Test
 	public void testNextKeyValue() {
-		//TODO Not implemented
 	}
 	
 	public void testGetProgress() {
-		//TODO Not implemented
 	}
 }

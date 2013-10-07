@@ -12,6 +12,5 @@ public class S3InputFormatTest {
 	
 	@Test
 	public void testGetSplits() {
-		//TODO Not implemented
 	}
 }
