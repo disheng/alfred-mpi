@@ -1,7 +1,6 @@
 #!/bin/bash
 
-MACHINEFILENAME=machinelist
-MACHINEFILE=`pwd`/$MACHINEFILENAME
+MACHINEFILE=machinelist
 
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root" 
