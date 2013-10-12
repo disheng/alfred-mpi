@@ -37,3 +37,5 @@ EOF
 }
 
 parse_script_option_list $@
+
+exit 0
