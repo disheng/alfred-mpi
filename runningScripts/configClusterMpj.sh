@@ -1,8 +1,17 @@
 #!/bin/bash
 URI_DOWNLOAD=https://github.com/furio/alfred-mpi/blob/files/mpj-v0_38.zip?raw=true 
 
+if [ $# -ne 1 ]; then
+  echo "Missing user name as parameter."
+  exit 1
+fi
+
 HOMEDIR=/home/$@
 cd $HOMEDIR
+
+if [ ! -f .bashrc ]; then
+  touch .bashrc
+fi
 
 # Updated bash
 mv .bashrc .bashrc-old
