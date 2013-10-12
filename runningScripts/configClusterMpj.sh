@@ -23,3 +23,5 @@ rm .bashrc-old
 # Wget and unzip mpj
 wget $URI_DOWNLOAD -O mpj-v0_38.zip
 unzip mpj-v0_38.zip
+
+exit 0
