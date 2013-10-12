@@ -35,3 +35,5 @@ else
 fi
 
 echo "Done generating $MACHINEFILENAME for $inputnumber hosts"
+
+exit 0
