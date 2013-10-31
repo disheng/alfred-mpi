@@ -1,5 +1,5 @@
 #!/bin/bash
-URI_DOWNLOAD=https://github.com/furio/alfred-mpi/blob/files/mpj-v0_38.zip?raw=true 
+URI_DOWNLOAD=https://github.com/disheng/alfred-mpi/blob/files/mpj-v0_38.zip?raw=true 
 
 if [ $# -ne 1 ]; then
   echo "Missing user name as parameter."
